@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HADUKEN | Streetwear & Skateboarding</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Быстрые стили на случай, если style.css не загрузился */
+        .header { background: #1a1a1a; padding: 20px 0; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 15px; }
+        .header_inner { display: flex; justify-content: space-between; align-items: center; }
+        .header_logo a { color: #e74c3c; font-size: 28px; font-weight: bold; text-decoration: none; }
+        .nav a { color: white; text-decoration: none; margin-left: 30px; transition: color 0.3s; }
+        .nav a:hover { color: #e74c3c; }
+        .intro { background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('{{ url_for("static", filename="img/images/intro-bg.jpg") }}'); background-size: cover; height: 100vh; display: flex; align-items: center; text-align: center; }
+        .intro_title { color: white; font-size: 48px; }
+        .section { padding: 60px 0; }
+        .section_title { text-align: center; font-size: 36px; margin-bottom: 40px; }
+        .sale { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
+        .sale_item { width: 23%; min-width: 200px; }
+        .sale_img img { width: 100%; border-radius: 10px; transition: transform 0.3s; }
+        .sale_img img:hover { transform: scale(1.05); }
+        .brand_img img { width: 100%; border-radius: 10px; }
+        .map { text-align: center; padding: 40px; background: #f5f5f5; border-radius: 10px; }
+        .map_title a { color: #e74c3c; text-decoration: none; font-size: 24px; }
+        .footer { background: #1a1a1a; color: white; padding: 40px 0; margin-top: 40px; }
+        .row { display: flex; flex-wrap: wrap; gap: 40px; justify-content: space-between; }
+        .col h4 { color: #e74c3c; margin-bottom: 15px; }
+        .col ul { list-style: none; }
+        .col ul li { margin-bottom: 10px; }
+        .col ul li a { color: #aaa; text-decoration: none; }
+        .col ul li a:hover { color: #e74c3c; }
+        .footer_icons a { color: white; margin-right: 15px; font-size: 20px; }
+        .footer_icons a:hover { color: #e74c3c; }
+        .header1 { background: white; border-bottom: 1px solid #eee; }
+        .header_inner1 { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; }
+        .header_logo1 { font-size: 24px; font-weight: bold; color: #333; }
+        .nav_link1 { color: #333; text-decoration: none; }
+        .cards { display: flex; flex-wrap: wrap; gap: 30px; justify-content: center; padding: 40px 0; list-style: none; margin: 0; }
+        .cards__item { width: 280px; }
+        .card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.1); transition: transform 0.3s; height: 100%; display: flex; flex-direction: column; }
+        .card:hover { transform: translateY(-5px); }
+        .card__image { height: 280px; overflow: hidden; }
+        .card__image img { width: 100%; height: 100%; object-fit: cover; }
+        .card__content { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
+        .card__title { font-size: 18px; margin-bottom: 10px; }
+        .card__descr { color: #e74c3c; font-weight: bold; font-size: 20px; margin-bottom: 15px; }
+        .card__btn { background: #333; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; width: 100%; margin-top: auto; transition: background 0.3s; }
+        .card__btn:hover { background: #e74c3c; }
+        .main { text-align: center; padding: 60px 20px; }
+        .basket_image { width: 200px; margin-bottom: 30px; }
+        .main_title { font-size: 32px; color: #333; margin-bottom: 15px; }
+        .main_title1 { font-size: 18px; color: #777; }
+        .card__description { font-size: 12px; color: #777; margin-bottom: 15px; line-height: 1.4; }
+    </style>
+</head>
+<body>
+
+    <!-- ======================= ШАПКА (общая) ======================= -->
+    <header class="header">
+        <div class="container">
+            <div class="header_inner">
+                <div class="header_logo">
+                    <a href="#" onclick="showSection('home'); return false;">HADUKEN</a>
+                </div>
+                    <nav class="nav">
+    <a class="nav_link" href="#" onclick="showSection('account'); return false;">account</a>
+    <a class="nav_link" href="#" onclick="showSection('products'); return false;">products</a>
+    <a class="nav_link" href="#" onclick="showSection('basket'); return false;">
+        basket
+        <span id="basketCount" class="basket-count" style="background: #e74c3c; color: white; border-radius: 50%; padding: 2px 6px; font-size: 12px; margin-left: 5px; display: none;">0</span>
+    </a>
+                    </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- ======================= ОСНОВНЫЕ СЕКЦИИ ======================= -->
+    <main>
+        <!-- ГЛАВНАЯ (HOME) -->
+        <div id="home-section">
+            <div class="intro" style="background-image: url('{{ url_for('static', filename='img/images/skating.jpg') }}');">
+                <div class="container">
+                    <div class="intro_inner" >
+                        <h1 class="intro_title">clothes make the man</h1>
+                    </div>
+                </div>
+            </div>
+
+            <section class="section">
+                <div class="container">
+                    <div class="section_header">
+                        <h2 class="section_title">sales</h2>
+                    </div>
+                    <div class="sale">
+                        <div class="sale_item">
+                            <div class="sale_img">
+                                <a href="#" onclick="showSection('products'); return false;"><img src="{{ url_for('static', filename='img/images/sale1.jpg') }}" alt="sale1"></a>
+                            </div>
+                        </div>
+                        <div class="sale_item">
+                            <div class="sale_img">
+                                <a href="#" onclick="showSection('products'); return false;"><img src="{{ url_for('static', filename='img/images/sale2.jpg') }}" alt="sale2"></a>
+                            </div>
+                        </div>
+                        <div class="sale_item">
+                            <div class="sale_img">
+                                <a href="#" onclick="showSection('products'); return false;"><img src="{{ url_for('static', filename='img/images/sale3.jpg') }}" alt="sale3"></a>
+                            </div>
+                        </div>
+                        <div class="sale_item">
+                            <div class="sale_img">
+                                <a href="#" onclick="showSection('products'); return false;"><img src="{{ url_for('static', filename='img/images/sale4.jpg') }}" alt="sale4"></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section">
+                <div class="container">
+                    <div class="section_header">
+                        <h2 class="section_title">our assortment</h2>
+                        <h3 class="section_words">in our store you will find the most POPULAR SKATEBOARD AND STREETWEAR BRANDS</h3>
+                    </div>
+                    <div class="brand_item">
+                        <div class="brand_img">
+                            <img src="{{ url_for('static', filename='img/images/brandsd2_03.jpg') }}" alt="brands">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section section--map">
+                <div class="container">
+                    <div class="map" style="background-image: url('{{ url_for('static', filename='img/images/-1_02.jpg') }}');">
+                        <h2 class="map_title">
+                            <i class="fas fa-map-pin"></i>
+                            <a href="https://maps.app.goo.gl/x9tDdKsvkYpSxQep9" target="_blank">Open Map</a>
+                        </h2>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- СТРАНИЦА ACCOUNT -->
+        <div id="account-section" style="display: none;">
+            <div style="min-height: 100vh; background: #fff; padding: 120px 20px 60px; text-align: center;">
+                <h2>Аккаунт</h2>
+                <div class="account-info" style="margin-top: 30px; padding: 30px; background: #f5f5f5; border-radius: 15px; max-width: 400px; margin-left: auto; margin-right: auto;">
+                    <p id="accountName" style="font-size: 20px; margin-bottom: 10px;">Загрузка...</p>
+                    <p id="accountEmail" style="color: #666;"></p>
+                    <hr style="margin: 20px 0;">
+                    <button onclick="goToProfile()" style="background: #e74c3c; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin-right: 10px;">📱 Мой профиль</button>
+                    <button onclick="logout()" style="background: #666; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">🚪 Выйти</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- СТРАНИЦА PRODUCTS (ДИНАМИЧЕСКАЯ) -->
+        <!-- СТРАНИЦА PRODUCTS (динамическая загрузка товаров из БД с поиском и сортировкой) -->
+<div id="products-section" style="display: none;">
+    <div class="header1" style="position: relative; background: #fff; padding: 20px 0;">
+        <div class="container">
+            <div class="header_inner1">
+                <div class="header_logo1">products</div>
+                <nav class="nav1">
+                    <a class="nav_link1" href="#" onclick="showSection('home'); return false;">go back</a>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <!-- Панель поиска и сортировки -->
+        <div style="background: white; padding: 20px; border-radius: 15px; margin-bottom: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+            <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: center; justify-content: space-between;">
+                <div style="flex: 1; min-width: 200px;">
+                    <input type="text" id="searchInput" placeholder="🔍 Поиск товаров..." style="width: 100%; padding: 12px; border: 2px solid #eee; border-radius: 10px; font-size: 16px;">
+                </div>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <label style="color: #555; font-weight: bold;">Сортировать:</label>
+                    <select id="sortSelect" style="padding: 12px; border: 2px solid #eee; border-radius: 10px; font-size: 16px; background: white; cursor: pointer;">
+                        <option value="default">По умолчанию</option>
+                        <option value="price_asc">Цена: от дешевых к дорогим ↑</option>
+                        <option value="price_desc">Цена: от дорогих к дешевым ↓</option>
+                        <option value="name_asc">Название: А-Я</option>
+                        <option value="name_desc">Название: Я-А</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Контейнер для товаров -->
+        <div id="dynamic-products" class="cards">
+            <div style="text-align: center; width: 100%; padding: 40px;">Загрузка товаров...</div>
+        </div>
+    </div>
+</div>
+
+        <!-- СТРАНИЦА BASKET -->
+<div id="basket-section" style="display: none;">
+    <div class="header1" style="position: relative; background: #fff; padding: 20px 0;">
+        <div class="container">
+            <div class="header_inner1">
+                <div class="header_logo1">basket</div>
+                <nav class="nav1">
+                    <a class="nav_link1" href="#" onclick="showSection('home'); return false;">go back</a>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <div id="basket-content" class="main">
+        <div class="container">
+            <div class="main_inner">
+                <img class="basket_image" src="{{ url_for('static', filename='img/images/k.png') }}" alt="empty basket">
+                <h1 class="main_title">Empty basket</h1>
+                <h2 class="main_title1">Your basket is still empty, discover everything we've got for you</h2>
+            </div>
+        </div>
+    </div>
+</div>
+    </main>
+
+    <!-- ФУТЕР -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <h4>информация</h4>
+                    <ul class="list-unstyled">
+                        <li><a href="#" onclick="showSection('home'); return false;">home</a></li>
+                        <li><a href="#" onclick="showSection('account'); return false;">account</a></li>
+                        <li><a href="#">delivery</a></li>
+                        <li><a href="#">contacts</a></li>
+                    </ul>
+                </div>
+                <div class="col">
+                    <h4>work time</h4>
+                    <ul class="list-unstyled">
+                        <li><a href="#">ул. Карла Маркса 89/1, г. Брест</a></li>
+                        <li><a href="#">mon-sun: 9:00-20:00</a></li>
+                    </ul>
+                </div>
+                <div class="col">
+                    <h4>contacts</h4>
+                    <ul class="list-unstyled">
+                        <li><a href="tel:80162550269">8 0162 55-02-69</a></li>
+                    </ul>
+                </div>
+                <div class="col">
+                    <h4>our networks</h4>
+                    <div class="footer_icons">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Проверка авторизации при загрузке страницы
+        async function checkAuth() {
+            try {
+                const response = await fetch('/api/auth/me');
+                if (!response.ok) {
+                    window.location.href = '/auth/login';
+                    return false;
+                }
+                const user = await response.json();
+                document.getElementById('accountName').textContent = user.name;
+                document.getElementById('accountEmail').textContent = user.email;
+                return true;
+            } catch (err) {
+                window.location.href = '/auth/login';
+                return false;
+            }
+        }
+
+        // Функция загрузки и отображения товаров из БД
+        async function loadProducts() {
+            try {
+                const response = await fetch('/api/items');
+                const items = await response.json();
+                const container = document.getElementById('dynamic-products');
+
+                if (!container) return;
+
+                if (items.length === 0) {
+                    container.innerHTML = '<div style="text-align: center; width: 100%; padding: 40px;">📭 Товаров пока нет. Будьте первым, кто добавит товар!</div>';
+                    return;
+                }
+
+                container.innerHTML = '';
+
+                items.forEach(item => {
+                    const card = document.createElement('li');
+                    card.className = 'cards__item';
+                    card.innerHTML = `
+                        <article class="card">
+                            <div class="card__image">
+                                ${item.image_url ?
+                                    `<img src="${escapeHtml(item.image_url)}" alt="${escapeHtml(item.name)}" onerror="this.src='https://placehold.co/300x300?text=No+Image'">` :
+                                    `<img src="https://placehold.co/300x300?text=HADUKEN" alt="${escapeHtml(item.name)}">`
+                                }
+                            </div>
+                            <div class="card__content">
+                                <h3 class="card__title">${escapeHtml(item.name)}</h3>
+                                <p class="card__descr">$${item.price}</p>
+                                <p class="card__description">${item.description ? escapeHtml(item.description.substring(0, 100)) : ''}</p>
+                                <button class="card__btn" onclick="addToBasket(${item.id})">🛒 Add to cart</button>
+                            </div>
+                        </article>
+                    `;
+                    container.appendChild(card);
+                });
+            } catch (err) {
+                console.error('Ошибка загрузки товаров:', err);
+                const container = document.getElementById('dynamic-products');
+                if (container) {
+                    container.innerHTML = '<div style="text-align: center; width: 100%; padding: 40px; color: red;">⚠️ Ошибка загрузки товаров</div>';
+                }
+            }
+        }
+
+        // Функция добавления в корзину
+        function addToBasket(itemId) {
+            alert(`Товар #${itemId} добавлен в корзину! (Функция корзины в разработке)`);
+        }
+
+        // Функция для экранирования HTML
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function showSection(section) {
+    document.getElementById('home-section').style.display = 'none';
+    document.getElementById('account-section').style.display = 'none';
+    document.getElementById('products-section').style.display = 'none';
+    document.getElementById('basket-section').style.display = 'none';
+
+    if (section === 'home') {
+        document.getElementById('home-section').style.display = 'block';
+    } else if (section === 'account') {
+        document.getElementById('account-section').style.display = 'block';
+        fetch('/api/auth/me')
+            .then(res => res.json())
+            .then(user => {
+                document.getElementById('accountName').textContent = user.name;
+                document.getElementById('accountEmail').textContent = user.email;
+            })
+            .catch(() => {});
+    } else if (section === 'products') {
+        document.getElementById('products-section').style.display = 'block';
+        if (allItems.length === 0) {
+            loadProducts(); // Загружаем товары, если еще не загружены
+        } else {
+            filterAndDisplayProducts(); // Просто обновляем отображение
+        }
+    } else if (section === 'basket') {
+        document.getElementById('basket-section').style.display = 'block';
+        displayBasket(); // Функция для отображения корзины (нужно добавить)
+    }
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+        function goToProfile() {
+            window.location.href = '/profile';
+        }
+
+        async function logout() {
+            if (confirm('Вы уверены, что хотите выйти?')) {
+                const response = await fetch('/api/auth/logout', { method: 'POST' });
+                if (response.ok) {
+                    window.location.href = '/auth/login';
+                }
+            }
+        }
+        // Глобальная переменная для хранения всех товаров
+let allItems = [];
+
+// Функция загрузки и отображения товаров с поиском и сортировкой
+async function loadProducts() {
+    try {
+        const response = await fetch('/api/items');
+        allItems = await response.json(); // Сохраняем все товары в глобальную переменную
+        filterAndDisplayProducts(); // Отображаем с учетом фильтров
+    } catch (err) {
+        console.error('Ошибка загрузки товаров:', err);
+        const container = document.getElementById('dynamic-products');
+        if (container) {
+            container.innerHTML = '<div style="text-align: center; width: 100%; padding: 40px; color: red;">⚠️ Ошибка загрузки товаров</div>';
+        }
+    }
+}
+
+// Функция фильтрации и отображения товаров
+function filterAndDisplayProducts() {
+    const searchTerm = document.getElementById('searchInput') ? document.getElementById('searchInput').value.toLowerCase() : '';
+    const sortBy = document.getElementById('sortSelect') ? document.getElementById('sortSelect').value : 'default';
+
+    let filteredItems = [...allItems];
+
+    // Фильтрация по поисковому запросу
+    if (searchTerm) {
+        filteredItems = filteredItems.filter(item =>
+            item.name.toLowerCase().includes(searchTerm) ||
+            (item.description && item.description.toLowerCase().includes(searchTerm))
+        );
+    }
+
+    // Сортировка
+    if (sortBy === 'price_asc') {
+        filteredItems.sort((a, b) => a.price - b.price);
+    } else if (sortBy === 'price_desc') {
+        filteredItems.sort((a, b) => b.price - a.price);
+    } else if (sortBy === 'name_asc') {
+        filteredItems.sort((a, b) => a.name.localeCompare(b.name));
+    } else if (sortBy === 'name_desc') {
+        filteredItems.sort((a, b) => b.name.localeCompare(a.name));
+    }
+
+    // Отображение товаров
+    displayProducts(filteredItems, searchTerm);
+}
+
+// Функция отображения товаров
+function displayProducts(items, searchTerm = '') {
+    const container = document.getElementById('dynamic-products');
+
+    if (!container) return;
+
+    if (items.length === 0) {
+        if (searchTerm) {
+            container.innerHTML = '<div style="text-align: center; width: 100%; padding: 40px;">🔍 Товары не найдены. Попробуйте изменить поисковый запрос.</div>';
+        } else {
+            container.innerHTML = '<div style="text-align: center; width: 100%; padding: 40px;">📭 Товаров пока нет. Будьте первым, кто добавит товар!</div>';
+        }
+        return;
+    }
+
+    container.innerHTML = '';
+
+    items.forEach(item => {
+        const card = document.createElement('li');
+        card.className = 'cards__item';
+        card.innerHTML = `
+            <article class="card">
+                <div class="card__image">
+                    ${item.image_url ?
+                        `<img src="${escapeHtml(item.image_url)}" alt="${escapeHtml(item.name)}" onerror="this.src='https://placehold.co/300x300?text=No+Image'">` :
+                        `<img src="https://placehold.co/300x300?text=HADUKEN" alt="${escapeHtml(item.name)}">`
+                    }
+                </div>
+                <div class="card__content">
+                    <h3 class="card__title">${escapeHtml(item.name)}</h3>
+                    <p class="card__descr">$${item.price.toFixed(2)}</p>
+                    <p class="card__description" style="font-size: 12px; color: #777; margin-bottom: 15px;">${item.description ? escapeHtml(item.description.substring(0, 100)) : ''}</p>
+                    <button class="card__btn" onclick="addToBasket(${item.id})">🛒 Add to cart</button>
+                </div>
+            </article>
+        `;
+        container.appendChild(card);
+    });
+}
+
+// Функция для добавления товара в корзину
+function addToBasket(itemId) {
+    // Получаем текущую корзину из localStorage
+    let basket = JSON.parse(localStorage.getItem('basket') || '[]');
+
+    // Проверяем, есть ли уже такой товар в корзине
+    const existingItem = basket.find(item => item.id === itemId);
+
+    if (existingItem) {
+        existingItem.quantity = (existingItem.quantity || 1) + 1;
+    } else {
+        // Находим товар в allItems
+        const product = allItems.find(item => item.id === itemId);
+        if (product) {
+            basket.push({
+                id: product.id,
+                name: product.name,
+                price: product.price,
+                quantity: 1,
+                image_url: product.image_url
+            });
+        }
+    }
+
+    // Сохраняем в localStorage
+    localStorage.setItem('basket', JSON.stringify(basket));
+
+    // Показываем уведомление
+    showNotification('✅ Товар добавлен в корзину!');
+}
+
+// Функция для показа уведомления
+function showNotification(message) {
+    // Создаем элемент уведомления
+    const notification = document.createElement('div');
+    notification.textContent = message;
+    notification.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: #27ae60;
+        color: white;
+        padding: 12px 24px;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: bold;
+        z-index: 9999;
+        animation: slideIn 0.3s ease-out;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    `;
+
+    // Добавляем анимацию
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+
+    document.body.appendChild(notification);
+
+    // Удаляем уведомление через 2 секунды
+    setTimeout(() => {
+        notification.style.animation = 'slideIn 0.3s ease-out reverse';
+        setTimeout(() => notification.remove(), 300);
+    }, 2000);
+}
+
+// Функция для экранирования HTML
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Функция для обновления счетчика корзины (опционально)
+function updateBasketCount() {
+    const basket = JSON.parse(localStorage.getItem('basket') || '[]');
+    const totalItems = basket.reduce((sum, item) => sum + (item.quantity || 1), 0);
+
+    // Если есть элемент для отображения счетчика
+    const basketIcon = document.querySelector('.basket-count');
+    if (basketIcon) {
+        basketIcon.textContent = totalItems;
+        basketIcon.style.display = totalItems > 0 ? 'inline-block' : 'none';
+    }
+}
+
+// Добавляем обработчики событий после загрузки страницы
+document.addEventListener('DOMContentLoaded', function() {
+    // Обработчик поиска
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            filterAndDisplayProducts();
+        });
+    }
+
+    // Обработчик сортировки
+    const sortSelect = document.getElementById('sortSelect');
+    if (sortSelect) {
+        sortSelect.addEventListener('change', function() {
+            filterAndDisplayProducts();
+        });
+    }
+
+    // Если сейчас отображается products, загружаем товары
+    if (document.getElementById('products-section') &&
+        document.getElementById('products-section').style.display !== 'none') {
+        loadProducts();
+    }
+
+    // Обновляем счетчик корзины
+    updateBasketCount();
+});
+
+
+// Функция отображения корзины
+function displayBasket() {
+    const basketContainer = document.getElementById('basket-content');
+    if (!basketContainer) return;
+
+    const basket = JSON.parse(localStorage.getItem('basket') || '[]');
+
+    if (basket.length === 0) {
+        basketContainer.innerHTML = `
+            <div style="text-align: center; padding: 60px 20px;">
+                <img class="basket_image" src="{{ url_for('static', filename='img/images/k.png') }}" alt="empty basket" style="width: 150px;">
+                <h1 class="main_title">Empty basket</h1>
+                <h2 class="main_title1">Your basket is still empty, discover everything we've got for you</h2>
+                <button onclick="showSection('products')" style="margin-top: 20px; background: #e74c3c; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer;">🛍️ Go to Products</button>
+            </div>
+        `;
+        return;
+    }
+
+    let total = 0;
+    let basketHtml = `
+        <div style="max-width: 800px; margin: 0 auto;">
+            <h2 style="margin-bottom: 30px;">🛒 Моя корзина</h2>
+            <div style="background: #fafafa; border-radius: 15px; padding: 20px;">
+    `;
+
+    basket.forEach((item, index) => {
+        const itemTotal = item.price * item.quantity;
+        total += itemTotal;
+
+        basketHtml += `
+            <div style="display: flex; gap: 20px; padding: 20px; border-bottom: 1px solid #eee; align-items: center;">
+                <div style="width: 80px; height: 80px; background: #f0f0f0; border-radius: 10px; overflow: hidden;">
+                    <img src="${item.image_url || 'https://placehold.co/80x80?text=No+Image'}" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <div style="flex: 1;">
+                    <h3 style="margin-bottom: 5px;">${escapeHtml(item.name)}</h3>
+                    <p style="color: #e74c3c; font-weight: bold;">$${item.price}</p>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <button onclick="updateQuantity(${index}, -1)" style="background: #ddd; border: none; width: 30px; height: 30px; border-radius: 5px; cursor: pointer;">-</button>
+                    <span style="min-width: 30px; text-align: center;">${item.quantity}</span>
+                    <button onclick="updateQuantity(${index}, 1)" style="background: #ddd; border: none; width: 30px; height: 30px; border-radius: 5px; cursor: pointer;">+</button>
+                </div>
+                <div style="min-width: 80px; text-align: right; font-weight: bold;">
+                    $${itemTotal.toFixed(2)}
+                </div>
+                <button onclick="removeFromBasket(${index})" style="background: #e74c3c; color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer;">🗑</button>
+            </div>
+        `;
+    });
+
+    basketHtml += `
+                <div style="text-align: right; padding: 20px; font-size: 20px; font-weight: bold;">
+                    Итого: $${total.toFixed(2)}
+                </div>
+                <div style="display: flex; gap: 15px; justify-content: flex-end; padding: 20px;">
+                    <button onclick="clearBasket()" style="background: #95a5a6; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer;">Очистить корзину</button>
+                    <button onclick="checkout()" style="background: #27ae60; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer;">Оформить заказ</button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    basketContainer.innerHTML = basketHtml;
+}
+
+// Функция обновления количества товара
+function updateQuantity(index, delta) {
+    let basket = JSON.parse(localStorage.getItem('basket') || '[]');
+    const newQuantity = (basket[index].quantity || 1) + delta;
+
+    if (newQuantity <= 0) {
+        basket.splice(index, 1);
+    } else {
+        basket[index].quantity = newQuantity;
+    }
+
+    localStorage.setItem('basket', JSON.stringify(basket));
+    displayBasket();
+    updateBasketCount();
+}
+
+// Функция удаления товара из корзины
+function removeFromBasket(index) {
+    let basket = JSON.parse(localStorage.getItem('basket') || '[]');
+    basket.splice(index, 1);
+    localStorage.setItem('basket', JSON.stringify(basket));
+    displayBasket();
+    updateBasketCount();
+    showNotification('🗑 Товар удален из корзины');
+}
+
+// Функция очистки корзины
+function clearBasket() {
+    if (confirm('Вы уверены, что хотите очистить корзину?')) {
+        localStorage.setItem('basket', '[]');
+        displayBasket();
+        updateBasketCount();
+        showNotification('🗑 Корзина очищена');
+    }
+}
+
+// Функция оформления заказа
+function checkout() {
+    const basket = JSON.parse(localStorage.getItem('basket') || '[]');
+    if (basket.length === 0) {
+        showNotification('Корзина пуста!');
+        return;
+    }
+
+    alert('Спасибо за заказ! В ближайшее время с вами свяжется менеджер.');
+    localStorage.setItem('basket', '[]');
+    displayBasket();
+    updateBasketCount();
+}
+        // Запускаем проверку авторизации
+        checkAuth();
+    </script>
+</body>
+</html>

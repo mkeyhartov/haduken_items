@@ -1,0 +1,87 @@
+<!--<!doctype html>-->
+<!--<html>-->
+<!--<head>-->
+<!--    <title>Вход</title>-->
+<!--</head>-->
+<!--<body>-->
+<!--    <h1>Вход в аккаунт</h1>-->
+<!--    <form method="post">-->
+<!--        <input type="text" name="login" placeholder="Логин" required>-->
+<!--        <input type="password" name="password" placeholder="Пароль" required>-->
+<!--        <button type="submit">Войти</button>-->
+<!--    </form>-->
+<!--    <br>-->
+
+<!--    <a href="{{ url_for('index') }}">-->
+<!--        <button type="button">Регистрация</button>-->
+<!--    </a>-->
+<!--</body>-->
+<!--</html>-->
+
+
+
+<!doctype html>
+<html>
+<head>
+    <title>Вход | HADUKEN</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Arial', sans-serif; background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); min-height: 100vh; display: flex; justify-content: center; align-items: center; }
+        .container { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); width: 380px; }
+        h1 { text-align: center; color: #333; margin-bottom: 30px; font-size: 28px; }
+        .logo { text-align: center; font-size: 32px; font-weight: bold; color: #e74c3c; margin-bottom: 20px; }
+        input { width: 100%; padding: 14px; margin: 10px 0; border: 2px solid #eee; border-radius: 10px; font-size: 16px; transition: all 0.3s; }
+        input:focus { outline: none; border-color: #e74c3c; }
+        button { width: 100%; padding: 14px; background: #e74c3c; color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.3s; margin-top: 10px; }
+        button:hover { background: #c0392b; }
+        .error { color: #e74c3c; margin-top: 15px; text-align: center; font-size: 14px; }
+        .link { text-align: center; margin-top: 20px; }
+        .link a { color: #e74c3c; text-decoration: none; font-weight: bold; }
+        .link a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">HADUKEN</div>
+        <h1>Вход в аккаунт</h1>
+        <form id="loginForm">
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="password" id="password" placeholder="Пароль" required>
+            <button type="submit">Войти</button>
+        </form>
+        <div id="error" class="error"></div>
+        <div class="link">
+            <a href="{{ url_for('register_page') }}">Нет аккаунта? Зарегистрироваться</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('error');
+
+            errorDiv.textContent = '';
+
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    window.location.href = '/profile';
+                } else {
+                    errorDiv.textContent = data.error || 'Ошибка входа';
+                }
+            } catch (err) {
+                errorDiv.textContent = 'Ошибка соединения с сервером';
+            }
+        });
+    </script>
+</body>
+</html>

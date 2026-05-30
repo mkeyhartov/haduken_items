@@ -1,0 +1,106 @@
+<!--<!doctype html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <meta name="viewport"-->
+<!--          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">-->
+<!--    <meta http-equiv="X-UA-Compatible" content="ie=edge">-->
+<!--    <title>reggg</title>-->
+<!--</head>-->
+<!--<body>-->
+<!--<h1>reggg</h1>-->
+<!--<div>-->
+<!--   <h1>добавление записи</h1>-->
+<!--    <form method="post" class="form-control">-->
+<!--        <input type="text" name="name" placeholder="введите фио" class="form-control">-->
+<!--        <input type="text" name="login" placeholder="введите логин" class="form-control">-->
+<!--        <input type="text" name="password" placeholder="введите пароль" class="form-control">-->
+
+<!--        <select name="status" class="form-control">-->
+<!--            <option value="user">Пользователь</option>-->
+<!--            <option value="admin">Администратор</option>-->
+<!--        </select>-->
+
+<!--        <button class="btn btn-success" type="submit">добавить</button>-->
+<!--    </form>-->
+<!--</div>-->
+<!--</body>-->
+<!--</html>-->
+
+
+<!doctype html>
+<html>
+<head>
+    <title>Регистрация | HADUKEN</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Arial', sans-serif; background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); min-height: 100vh; display: flex; justify-content: center; align-items: center; }
+        .container { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); width: 380px; }
+        h1 { text-align: center; color: #333; margin-bottom: 30px; font-size: 28px; }
+        .logo { text-align: center; font-size: 32px; font-weight: bold; color: #e74c3c; margin-bottom: 20px; }
+        input { width: 100%; padding: 14px; margin: 10px 0; border: 2px solid #eee; border-radius: 10px; font-size: 16px; transition: all 0.3s; }
+        input:focus { outline: none; border-color: #e74c3c; }
+        button { width: 100%; padding: 14px; background: #e74c3c; color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.3s; margin-top: 10px; }
+        button:hover { background: #c0392b; }
+        .error { color: #e74c3c; margin-top: 15px; text-align: center; font-size: 14px; }
+        .success { color: #27ae60; margin-top: 15px; text-align: center; font-size: 14px; }
+        .link { text-align: center; margin-top: 20px; }
+        .link a { color: #e74c3c; text-decoration: none; font-weight: bold; }
+        .link a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">HADUKEN</div>
+        <h1>Регистрация</h1>
+        <form id="registerForm">
+            <input type="text" id="name" placeholder="Ваше имя" required>
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="password" id="password" placeholder="Пароль (мин. 6 символов)" required>
+            <button type="submit">Зарегистрироваться</button>
+        </form>
+        <div id="error" class="error"></div>
+        <div id="success" class="success"></div>
+        <div class="link">
+            <a href="{{ url_for('login_page') }}">Уже есть аккаунт? Войти</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('error');
+            const successDiv = document.getElementById('success');
+
+            errorDiv.textContent = '';
+            successDiv.textContent = '';
+
+            try {
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, password })
+                });
+фя
+                const data = await response.json();
+
+                if (response.ok) {
+                    successDiv.textContent = '✅ Регистрация успешна! Перенаправление...';
+                    setTimeout(() => { window.location.href = '/auth/login'; }, 1500);
+                } else {
+                    if (data.errors) {
+                        errorDiv.textContent = data.errors.join(', ');
+                    } else {
+                        errorDiv.textContent = data.error || 'Ошибка регистрации';
+                    }
+                }
+            } catch (err) {
+                errorDiv.textContent = 'Ошибка соединения с сервером';
+            }
+        });
+    </script>
+</body>
+</html>

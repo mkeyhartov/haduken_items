@@ -1,0 +1,496 @@
+/* ========== RESET & GLOBAL ========== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', 'Arial', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #333;
+    background-color: #eee;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+}
+
+a {
+    text-decoration: none;
+    transition: color 0.2s linear, opacity 0.2s;
+}
+
+.container {
+    width: 100%;
+    max-width: 1024px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+/* ========== HEADER (шапка) ========== */
+.header {
+    width: 100%;
+    padding-top: 30px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+
+.header_inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header_logo {
+    font-size: 30px;
+    font-weight: 700;
+    color: #fff;
+}
+
+.header_logo a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.nav {
+    font-size: 14px;
+    text-transform: uppercase;
+}
+
+.nav_link {
+    display: inline-block;
+    vertical-align: top;
+    margin: 0 15px;
+    position: relative;
+    color: #fff;
+    text-decoration: none;
+    transition: color 0.2s linear;
+}
+
+.nav_link:after {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 2px;
+    background-color: #93fff1;
+    opacity: 0;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    transition: opacity 0.2s linear;
+}
+
+.nav_link:hover {
+    color: #93fff1;
+}
+
+.nav_link:hover:after {
+    opacity: 1;
+}
+
+/* ========== INTRO (Главный экран) ========== */
+.intro {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    width: 100%;
+    height: 100vh;
+    background: url('../img/images/skating.jpg') center no-repeat;
+    background-size: cover;
+}
+
+.intro_inner {
+    width: 100%;
+    max-width: 650px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.intro_title {
+    font-size: clamp(40px, 10vw, 110px);
+    font-weight: 700;
+    text-transform: uppercase;
+    line-height: 1;
+    color: #fff;
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+}
+
+/* ========== СЕКЦИИ ========== */
+.section {
+    padding: 50px 0;
+}
+
+.section--map {
+    background: #e6e6e6 url('images/111_02.jpg') center no-repeat;
+    background-size: cover;
+    padding: 80px 0;
+}
+
+.section_header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.section_title {
+    font-size: 30px;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: #333;
+}
+
+.section_words {
+    font-size: 16px;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: #333;
+    margin-top: 10px;
+}
+
+/* ========== SALE (галерея) ========== */
+.sale {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.sale_item {
+    flex: 1 1 180px;
+    transition: transform 0.2s;
+}
+
+.sale_item:hover {
+    transform: translate3d(-5px, -5px, 0);
+}
+
+.sale_img {
+    background: linear-gradient(to bottom, #223c3e, #2197a1);
+    overflow: hidden;
+}
+
+.sale_img img {
+    display: block;
+    width: 100%;
+    transition: opacity 0.2s;
+}
+
+.sale_item:hover .sale_img img {
+    opacity: 0.8;
+}
+
+/* ========== БРЕНДЫ ========== */
+.brand_item {
+    text-align: center;
+}
+
+.brand_img img {
+    max-width: 100%;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* ========== КАРТА ========== */
+.map {
+    text-align: center;
+}
+
+.map_title {
+    font-size: 24px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.map_title a {
+    color: black;
+    text-decoration: none;
+}
+
+.map_title a:hover {
+    text-decoration: underline;
+}
+
+/* ========== ФУТЕР ========== */
+.footer {
+    background-color: #fff;
+    padding: 40px 0 20px;
+    border-top: 1px solid #ddd;
+}
+
+.row {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 30px;
+}
+
+.footer h4 {
+    color: black;
+    text-transform: uppercase;
+    font-size: 16px;
+    border-bottom: 1px solid #666;
+    padding-bottom: 3px;
+    margin-bottom: 15px;
+}
+
+.list-unstyled {
+    list-style: none;
+}
+
+.list-unstyled li {
+    margin-bottom: 8px;
+}
+
+.list-unstyled a {
+    color: #343434;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-size: 13px;
+}
+
+.list-unstyled a:hover {
+    color: #93fff1;
+}
+
+.footer_icons a {
+    color: #343434;
+    font-size: 24px;
+    margin-right: 15px;
+}
+
+.footer_icons a:hover {
+    color: #93fff1;
+}
+
+/* ========== СТРАНИЦА ТОВАРОВ (products) ========== */
+.cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    list-style: none;
+    margin-top: 120px;
+    justify-content: center;
+    padding: 0 20px;
+}
+
+.cards__item {
+    flex: 1 1 260px;
+    max-width: 300px;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    background-color: #bfbfbf;
+    height: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card__image {
+    height: 250px;
+    overflow: hidden;
+}
+
+.card__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.card__content {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    flex-grow: 1;
+}
+
+.card__title {
+    font-size: 18px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.card__descr {
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.card__btn {
+    margin-top: auto;
+    border: none;
+    padding: 10px 20px;
+    color: #fff;
+    background-color: #000;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.2s;
+}
+
+.card__btn:hover {
+    background-color: #93fff1;
+    color: #000;
+}
+
+/* ========== СТРАНИЦА КОРЗИНЫ ========== */
+.header1 {
+    width: 100%;
+    padding-top: 30px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: transparent;
+}
+
+.header_inner1 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header_logo1 {
+    font-size: 30px;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: #333;
+}
+
+.nav1 {
+    font-size: 14px;
+    text-transform: uppercase;
+}
+
+.nav_link1 {
+    display: inline-block;
+    margin: 0 15px;
+    position: relative;
+    color: #333;
+    text-decoration: none;
+}
+
+.nav_link1:after {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 2px;
+    background-color: #93fff1;
+    opacity: 0;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    transition: opacity 0.2s;
+}
+
+.nav_link1:hover {
+    color: #93fff1;
+}
+
+.nav_link1:hover:after {
+    opacity: 1;
+}
+
+.main {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #fff;
+}
+
+.main_inner {
+    text-align: center;
+    max-width: 650px;
+    margin: 0 auto;
+    padding: 120px 20px 40px;
+}
+
+.main_title {
+    font-size: 50px;
+    font-weight: 700;
+    text-transform: uppercase;
+    line-height: 1.2;
+    color: #333;
+}
+
+.main_title1 {
+    font-size: 20px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #333;
+}
+
+.basket_image {
+    max-width: 200px;
+    margin: 0 auto 20px;
+    display: block;
+}
+
+/* ========== СТРАНИЦА ABOUT US ========== */
+.main_image {
+    width: 100%;
+    max-width: 800px;
+    margin: 100px auto 0;
+    display: block;
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    transition: transform 0.3s;
+}
+
+.main_image:hover {
+    transform: scale(1.02);
+}
+
+/* ========== АДАПТИВ ========== */
+@media (max-width: 768px) {
+    .header_inner, .header_inner1 {
+        flex-direction: column;
+        gap: 15px;
+    }
+    .nav, .nav1 {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .sale {
+        justify-content: center;
+    }
+    .row {
+        flex-direction: column;
+        text-align: center;
+    }
+    .cards {
+        margin-top: 160px;
+    }
+    .main_title {
+        font-size: 32px;
+    }
+}
+
+@media (max-width: 480px) {
+    .intro_title {
+        font-size: 48px;
+    }
+    .section_title {
+        font-size: 24px;
+    }
+    .nav_link, .nav_link1 {
+        margin: 0 8px;
+    }
+}
+
+img {
+    background-color: #ddd;
+}

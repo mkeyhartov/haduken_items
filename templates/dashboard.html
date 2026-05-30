@@ -1,0 +1,161 @@
+<!doctype html>
+<html>
+<head>
+    <title>Управление товарами | HADUKEN</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Arial', sans-serif; background: #f5f5f5; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; }
+        .card { background: white; border-radius: 20px; padding: 30px; margin-bottom: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        h1 { color: #e74c3c; margin-bottom: 10px; }
+        h2 { color: #333; margin-bottom: 20px; font-size: 22px; }
+        .back-link { color: #3498db; text-decoration: none; display: inline-block; margin-bottom: 20px; }
+        .back-link:hover { text-decoration: underline; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; color: #555; }
+        input, textarea { width: 100%; padding: 12px; border: 2px solid #eee; border-radius: 10px; font-size: 16px; transition: all 0.3s; }
+        input:focus, textarea:focus { outline: none; border-color: #e74c3c; }
+        textarea { resize: vertical; min-height: 80px; }
+        .btn { padding: 12px 24px; border: none; border-radius: 10px; font-size: 16px; cursor: pointer; transition: all 0.3s; }
+        .btn-success { background: #27ae60; color: white; }
+        .btn-success:hover { background: #219a52; }
+        .btn-danger { background: #e74c3c; color: white; }
+        .btn-danger:hover { background: #c0392b; }
+        .items-list { margin-top: 20px; }
+        .item-card { background: #fafafa; border: 1px solid #eee; border-radius: 15px; padding: 20px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+        .item-info { flex: 1; }
+        .item-name { font-weight: bold; font-size: 18px; color: #333; }
+        .item-price { color: #e74c3c; font-weight: bold; margin-top: 5px; }
+        .item-desc { color: #777; font-size: 14px; margin-top: 5px; }
+        .delete-btn { background: #e74c3c; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 14px; }
+        .delete-btn:hover { background: #c0392b; }
+        .empty { text-align: center; color: #999; padding: 40px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>📦 Панель управления</h1>
+            <a href="{{ url_for('profile_page') }}" class="back-link">← Назад в профиль</a>
+
+            <h2>➕ Добавить новый товар</h2>
+            <form id="itemForm">
+                <div class="form-group">
+                    <label>Название товара *</label>
+                    <input type="text" id="name" placeholder="Например: Футболка Carhartt" required>
+                </div>
+                <div class="form-group">
+                    <label>Цена *</label>
+                    <input type="number" id="price" step="0.01" placeholder="20.00" required>
+                </div>
+                <div class="form-group">
+                    <label>Описание</label>
+                    <textarea id="description" placeholder="Краткое описание товара..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>URL изображения</label>
+                    <input type="text" id="image_url" placeholder="https://example.com/image.jpg">
+                </div>
+                <button type="submit" class="btn btn-success">➕ Добавить товар</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>🛍️ Мои товары</h2>
+            <div id="itemsList" class="items-list">
+                <div class="empty">Загрузка...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function loadItems() {
+            try {
+                const response = await fetch('/api/items');
+                const items = await response.json();
+                const container = document.getElementById('itemsList');
+
+                if (items.length === 0) {
+                    container.innerHTML = '<div class="empty">📭 У вас пока нет добавленных товаров</div>';
+                    return;
+                }
+
+                container.innerHTML = '';
+                items.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'item-card';
+                    div.innerHTML = `
+                        <div class="item-info">
+                            <div class="item-name">${escapeHtml(item.name)}</div>
+                            <div class="item-price">$${item.price}</div>
+                            ${item.description ? `<div class="item-desc">${escapeHtml(item.description)}</div>` : ''}
+                            <div class="item-desc" style="color:#aaa; font-size:12px;">ID: ${item.id}</div>
+                        </div>
+                        <button class="delete-btn" onclick="deleteItem(${item.id})">🗑 Удалить</button>
+                    `;
+                    container.appendChild(div);
+                });
+            } catch (err) {
+                document.getElementById('itemsList').innerHTML = '<div class="empty">⚠️ Ошибка загрузки товаров</div>';
+            }
+        }
+
+        async function deleteItem(id) {
+            if (!confirm('Вы уверены, что хотите удалить этот товар?')) return;
+
+            try {
+                const response = await fetch(`/api/items/${id}`, { method: 'DELETE' });
+                if (response.ok) {
+                    loadItems();
+                } else {
+                    const data = await response.json();
+                    alert(data.error || 'Ошибка удаления');
+                }
+            } catch (err) {
+                alert('Ошибка соединения');
+            }
+        }
+
+        document.getElementById('itemForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const name = document.getElementById('name').value;
+            const price = parseFloat(document.getElementById('price').value);
+            const description = document.getElementById('description').value;
+            const image_url = document.getElementById('image_url').value;
+
+            if (!name || isNaN(price) || price <= 0) {
+                alert('Пожалуйста, заполните название и корректную цену');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/items', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, price, description, image_url })
+                });
+
+                if (response.ok) {
+                    document.getElementById('itemForm').reset();
+                    loadItems();
+                    alert('✅ Товар успешно добавлен!');
+                } else {
+                    const data = await response.json();
+                    alert(data.error || 'Ошибка добавления');
+                }
+            } catch (err) {
+                alert('Ошибка соединения');
+            }
+        });
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        loadItems();
+    </script>
+</body>
+</html>
