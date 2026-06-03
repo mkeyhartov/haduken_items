@@ -432,8 +432,20 @@ function filterAndDisplayProducts() {
 }
 
 // Функция отображения товаров
-function displayProducts(items, searchTerm = '') {
+// Функция отображения товаров с кнопкой редактирования для владельца
+async function displayProducts(items, searchTerm = '') {
     const container = document.getElementById('dynamic-products');
+
+    // Получаем текущего пользователя
+    let currentUser = null;
+    try {
+        const meResponse = await fetch('/api/auth/me');
+        if (meResponse.ok) {
+            currentUser = await meResponse.json();
+        }
+    } catch (err) {
+        console.error('Ошибка получения пользователя');
+    }
 
     if (!container) return;
 
@@ -451,6 +463,8 @@ function displayProducts(items, searchTerm = '') {
     items.forEach(item => {
         const card = document.createElement('li');
         card.className = 'cards__item';
+        const isOwner = currentUser && item.created_by === currentUser.id;
+
         card.innerHTML = `
             <article class="card">
                 <div class="card__image">
@@ -464,11 +478,56 @@ function displayProducts(items, searchTerm = '') {
                     <p class="card__descr">$${item.price.toFixed(2)}</p>
                     <p class="card__description" style="font-size: 12px; color: #777; margin-bottom: 15px;">${item.description ? escapeHtml(item.description.substring(0, 100)) : ''}</p>
                     <button class="card__btn" onclick="addToBasket(${item.id})">🛒 Add to cart</button>
+                    ${isOwner ? `<button class="card__btn" onclick="editProduct(${item.id})" style="background: #3498db; margin-top: 10px;">✏️ Edit</button>` : ''}
                 </div>
             </article>
         `;
         container.appendChild(card);
     });
+}
+
+
+// Функция для редактирования товара из магазина
+async function editProduct(itemId) {
+    try {
+        const response = await fetch('/api/items');
+        const items = await response.json();
+        const item = items.find(i => i.id === itemId);
+
+        if (item) {
+            const newName = prompt('Введите новое название:', item.name);
+            if (newName && newName.trim()) {
+                const newPrice = parseFloat(prompt('Введите новую цену:', item.price));
+                if (!isNaN(newPrice) && newPrice > 0) {
+                    const newDescription = prompt('Введите новое описание:', item.description || '');
+                    const newImageUrl = prompt('Введите новый URL изображения:', item.image_url || '');
+
+                    const updateResponse = await fetch(`/api/items/${itemId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            name: newName.trim(),
+                            price: newPrice,
+                            description: newDescription || '',
+                            image_url: newImageUrl || ''
+                        })
+                    });
+
+                    if (updateResponse.ok) {
+                        alert('✅ Товар успешно обновлен!');
+                        loadProducts(); // Перезагружаем товары
+                    } else {
+                        const data = await updateResponse.json();
+                        alert(data.error || 'Ошибка обновления');
+                    }
+                } else {
+                    alert('Некорректная цена');
+                }
+            }
+        }
+    } catch (err) {
+        alert('Ошибка редактирования товара');
+    }
 }
 
 // Функция для добавления товара в корзину
