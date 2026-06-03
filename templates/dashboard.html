@@ -153,94 +153,191 @@
         </form>
     </div>
 </div>
-    <script>
-        async function loadItems() {
-            try {
-                const response = await fetch('/api/items');
-                const items = await response.json();
-                const container = document.getElementById('itemsList');
+   <script>
+    let currentUserId = null;
 
-                if (items.length === 0) {
-                    container.innerHTML = '<div class="empty">📭 У вас пока нет добавленных товаров</div>';
-                    return;
-                }
-
-                container.innerHTML = '';
-                items.forEach(item => {
-                    const div = document.createElement('div');
-                    div.className = 'item-card';
-                    div.innerHTML = `
-                        <div class="item-info">
-                            <div class="item-name">${escapeHtml(item.name)}</div>
-                            <div class="item-price">$${item.price}</div>
-                            ${item.description ? `<div class="item-desc">${escapeHtml(item.description)}</div>` : ''}
-                            <div class="item-desc" style="color:#aaa; font-size:12px;">ID: ${item.id}</div>
-                        </div>
-                        <button class="delete-btn" onclick="deleteItem(${item.id})">🗑 Удалить</button>
-                    `;
-                    container.appendChild(div);
-                });
-            } catch (err) {
-                document.getElementById('itemsList').innerHTML = '<div class="empty">⚠️ Ошибка загрузки товаров</div>';
+    // Получаем информацию о текущем пользователе
+    async function getCurrentUser() {
+        try {
+            const response = await fetch('/api/auth/me');
+            if (response.ok) {
+                const user = await response.json();
+                currentUserId = user.id;
             }
+        } catch (err) {
+            console.error('Ошибка получения пользователя:', err);
         }
+    }
 
-        async function deleteItem(id) {
-            if (!confirm('Вы уверены, что хотите удалить этот товар?')) return;
+    async function loadItems() {
+        try {
+            const response = await fetch('/api/items');
+            const items = await response.json();
+            const container = document.getElementById('itemsList');
 
-            try {
-                const response = await fetch(`/api/items/${id}`, { method: 'DELETE' });
-                if (response.ok) {
-                    loadItems();
-                } else {
-                    const data = await response.json();
-                    alert(data.error || 'Ошибка удаления');
-                }
-            } catch (err) {
-                alert('Ошибка соединения');
-            }
-        }
+            // Фильтруем товары только текущего пользователя
+            const myItems = items.filter(item => item.created_by === currentUserId);
 
-        document.getElementById('itemForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const name = document.getElementById('name').value;
-            const price = parseFloat(document.getElementById('price').value);
-            const description = document.getElementById('description').value;
-            const image_url = document.getElementById('image_url').value;
-
-            if (!name || isNaN(price) || price <= 0) {
-                alert('Пожалуйста, заполните название и корректную цену');
+            if (myItems.length === 0) {
+                container.innerHTML = '<div class="empty">📭 У вас пока нет добавленных товаров</div>';
                 return;
             }
 
-            try {
-                const response = await fetch('/api/items', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, price, description, image_url })
-                });
+            container.innerHTML = '';
+            myItems.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'item-card';
+                div.innerHTML = `
+                    <div class="item-info">
+                        <div class="item-name">${escapeHtml(item.name)}</div>
+                        <div class="item-price">$${item.price}</div>
+                        ${item.description ? `<div class="item-desc">${escapeHtml(item.description)}</div>` : ''}
+                        <div class="item-desc" style="color:#aaa; font-size:12px;">ID: ${item.id}</div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="edit-btn" onclick="openEditModal(${item.id})">✏️ Редактировать</button>
+                        <button class="delete-btn" onclick="deleteItem(${item.id})">🗑 Удалить</button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        } catch (err) {
+            document.getElementById('itemsList').innerHTML = '<div class="empty">⚠️ Ошибка загрузки товаров</div>';
+        }
+    }
 
-                if (response.ok) {
-                    document.getElementById('itemForm').reset();
-                    loadItems();
-                    alert('✅ Товар успешно добавлен!');
-                } else {
-                    const data = await response.json();
-                    alert(data.error || 'Ошибка добавления');
-                }
-            } catch (err) {
-                alert('Ошибка соединения');
+    // Открыть модальное окно с данными товара
+    async function openEditModal(itemId) {
+        try {
+            const response = await fetch('/api/items');
+            const items = await response.json();
+            const item = items.find(i => i.id === itemId);
+
+            if (item) {
+                document.getElementById('edit_id').value = item.id;
+                document.getElementById('edit_name').value = item.name;
+                document.getElementById('edit_price').value = item.price;
+                document.getElementById('edit_description').value = item.description || '';
+                document.getElementById('edit_image_url').value = item.image_url || '';
+                document.getElementById('editModal').style.display = 'flex';
             }
-        });
+        } catch (err) {
+            alert('Ошибка загрузки данных товара');
+        }
+    }
 
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
+    // Закрыть модальное окно
+    function closeEditModal() {
+        document.getElementById('editModal').style.display = 'none';
+        document.getElementById('editForm').reset();
+    }
+
+    // Сохранить изменения товара
+    document.getElementById('editForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const id = document.getElementById('edit_id').value;
+        const name = document.getElementById('edit_name').value;
+        const price = parseFloat(document.getElementById('edit_price').value);
+        const description = document.getElementById('edit_description').value;
+        const image_url = document.getElementById('edit_image_url').value;
+
+        if (!name || isNaN(price) || price <= 0) {
+            alert('Пожалуйста, заполните название и корректную цену');
+            return;
         }
 
-        loadItems();
-    </script>
+        try {
+            const response = await fetch(`/api/items/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, price, description, image_url })
+            });
+
+            if (response.ok) {
+                closeEditModal();
+                loadItems();
+                alert('✅ Товар успешно обновлен!');
+            } else {
+                const data = await response.json();
+                alert(data.error || 'Ошибка обновления');
+            }
+        } catch (err) {
+            alert('Ошибка соединения');
+        }
+    });
+
+    async function deleteItem(id) {
+        if (!confirm('Вы уверены, что хотите удалить этот товар?')) return;
+
+        try {
+            const response = await fetch(`/api/items/${id}`, { method: 'DELETE' });
+            if (response.ok) {
+                loadItems();
+                alert('✅ Товар удален');
+            } else {
+                const data = await response.json();
+                alert(data.error || 'Ошибка удаления');
+            }
+        } catch (err) {
+            alert('Ошибка соединения');
+        }
+    }
+
+    document.getElementById('itemForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const name = document.getElementById('name').value;
+        const price = parseFloat(document.getElementById('price').value);
+        const description = document.getElementById('description').value;
+        const image_url = document.getElementById('image_url').value;
+
+        if (!name || isNaN(price) || price <= 0) {
+            alert('Пожалуйста, заполните название и корректную цену');
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/items', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, price, description, image_url })
+            });
+
+            if (response.ok) {
+                document.getElementById('itemForm').reset();
+                loadItems();
+                alert('✅ Товар успешно добавлен!');
+            } else {
+                const data = await response.json();
+                alert(data.error || 'Ошибка добавления');
+            }
+        } catch (err) {
+            alert('Ошибка соединения');
+        }
+    });
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // Закрыть модальное окно при клике вне его
+    window.onclick = function(event) {
+        const modal = document.getElementById('editModal');
+        if (event.target === modal) {
+            closeEditModal();
+        }
+    }
+
+    // Инициализация
+    async function init() {
+        await getCurrentUser();
+        await loadItems();
+    }
+
+    init();
+</script>
 </body>
 </html>
