@@ -120,7 +120,39 @@
             </div>
         </div>
     </div>
-
+    <!-- ВСТАВИТЬ ПЕРЕД </body> -->
+<!-- Модальное окно редактирования -->
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>✏️ Редактировать товар</h3>
+            <button class="close-modal" onclick="closeEditModal()">&times;</button>
+        </div>
+        <form id="editForm">
+            <input type="hidden" id="edit_id">
+            <div class="form-group">
+                <label>Название товара</label>
+                <input type="text" id="edit_name" required>
+            </div>
+            <div class="form-group">
+                <label>Цена</label>
+                <input type="number" id="edit_price" step="0.01" required>
+            </div>
+            <div class="form-group">
+                <label>Описание</label>
+                <textarea id="edit_description" rows="4"></textarea>
+            </div>
+            <div class="form-group">
+                <label>URL изображения</label>
+                <input type="text" id="edit_image_url">
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Отмена</button>
+                <button type="submit" class="btn btn-success">💾 Сохранить изменения</button>
+            </div>
+        </form>
+    </div>
+</div>
     <script>
         async function loadItems() {
             try {
