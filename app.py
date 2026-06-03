@@ -281,6 +281,47 @@ def delete_item(item_id):
     return jsonify({'message': 'Item deleted'}), 200
 
 
+# ВСТАВИТЬ ПОСЛЕ эндпоинта delete_item, ПЕРЕД страницами (frontend)
+
+@app.route('/api/items/<int:item_id>', methods=['PUT'])
+@login_required
+def update_item(item_id):
+    """Обновление товара (только для создателя или админа)"""
+    item = Item.query.get(item_id)
+    if not item:
+        return jsonify({'error': 'Item not found'}), 404
+
+    # Только создатель или админ могут редактировать
+    if item.created_by != session['user_id'] and session.get('user_status') != 'admin':
+        return jsonify({'error': 'Forbidden'}), 403
+
+    data = request.get_json()
+    if not data:
+        return jsonify({'error': 'Invalid request'}), 400
+
+    # Обновляем поля, если они переданы
+    if 'name' in data:
+        name = data['name'].strip()
+        if not name:
+            return jsonify({'error': 'Name cannot be empty'}), 400
+        item.name = name
+
+    if 'price' in data:
+        price = data['price']
+        if not isinstance(price, (int, float)) or price <= 0:
+            return jsonify({'error': 'Valid price is required'}), 400
+        item.price = price
+
+    if 'description' in data:
+        item.description = data['description'].strip()
+
+    if 'image_url' in data:
+        item.image_url = data['image_url'].strip()
+
+    db.session.commit()
+
+    return jsonify(item.to_dict()), 200
+
 # ======================= СТРАНИЦЫ (ФРОНТЕНД) =======================
 @app.route('/auth/login')
 def login_page():
