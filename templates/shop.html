@@ -240,6 +240,149 @@
     outline: none;
     border-color: #e74c3c;
 }
+        /* Стили для модального окна оформления заказа */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(5px);
+    z-index: 10000;
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.checkout-modal .modal-content {
+    max-width: 500px;
+    width: 90%;
+    background: white;
+    border-radius: 24px;
+    overflow: hidden;
+    animation: slideUp 0.3s ease-out;
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+}
+
+.checkout-modal .modal-header {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    padding: 20px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.checkout-modal .modal-header h3 {
+    color: white;
+    margin: 0;
+    font-size: 20px;
+}
+
+.checkout-modal .close-modal {
+    background: rgba(255,255,255,0.2);
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: white;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    transition: all 0.3s;
+}
+
+.checkout-modal .close-modal:hover {
+    background: rgba(255,255,255,0.4);
+    transform: rotate(90deg);
+}
+
+.checkout-modal .modal-body {
+    padding: 24px;
+}
+
+.checkout-form-group {
+    margin-bottom: 20px;
+}
+
+.checkout-form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #555;
+    font-size: 14px;
+}
+
+.checkout-form-group input,
+.checkout-form-group textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    font-size: 15px;
+    transition: all 0.3s;
+    font-family: inherit;
+}
+
+.checkout-form-group input:focus,
+.checkout-form-group textarea:focus {
+    outline: none;
+    border-color: #e74c3c;
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+}
+
+.checkout-modal .modal-footer {
+    padding: 16px 24px;
+    border-top: 1px solid #f0f0f0;
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    background: #fafafa;
+}
+
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-secondary {
+    background: #95a5a6;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #7f8c8d;
+}
+
+.btn-success {
+    background: #27ae60;
+    color: white;
+}
+
+.btn-success:hover {
+    background: #219a52;
+}
     </style>
 </head>
 <body>
