@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Страница не найдена | HADUKEN</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .error-container {
+            text-align: center;
+            max-width: 600px;
+            background: white;
+            border-radius: 30px;
+            padding: 50px 40px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .error-code {
+            font-size: 120px;
+            font-weight: bold;
+            color: #e74c3c;
+            line-height: 1;
+            margin-bottom: 20px;
+            text-shadow: 4px 4px 0px rgba(231, 76, 60, 0.2);
+        }
+
+        .error-title {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .error-message {
+            color: #666;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .error-image {
+            width: 200px;
+            margin: 20px auto;
+            opacity: 0.8;
+        }
+
+        .error-image svg {
+            width: 100%;
+            height: auto;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 28px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+        }
+
+        .btn-secondary {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .search-box {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid #eee;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #e74c3c;
+            box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+        }
+
+        @media (max-width: 600px) {
+            .error-container {
+                padding: 30px 20px;
+            }
+
+            .error-code {
+                font-size: 80px;
+            }
+
+            .error-title {
+                font-size: 22px;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-code">404</div>
+
+        <div class="error-image">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" fill="#e74c3c"/>
+            </svg>
+        </div>
+
+        <h1 class="error-title">Страница не найдена</h1>
+
+        <p class="error-message">
+            К сожалению, страница, которую вы ищете, не существует или была перемещена.<br>
+            Проверьте правильность введенного адреса или вернитесь на главную.
+        </p>
+
+        <div class="buttons">
+            <a href="{{ url_for('index') }}" class="btn btn-primary">
+                🏠 На главную
+            </a>
+
+            {% if 'user_id' in session %}
+                <a href="{{ url_for('shop') }}" class="btn btn-secondary">
+                    🛒 В магазин
+                </a>
+            {% else %}
+                <a href="{{ url_for('login_page') }}" class="btn btn-secondary">
+                    🔐 Войти
+                </a>
+            {% endif %}
+        </div>
+
+        <div class="search-box">
+            <p style="color: #999; margin-bottom: 10px; font-size: 14px;">Или попробуйте поискать:</p>
+            <input type="text" class="search-input" placeholder="🔍 Поиск товаров..." id="searchInput">
+        </div>
+    </div>
+
+    <script>
+        // Поиск на сайте
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const query = this.value.trim();
+                if (query) {
+                    window.location.href = "{{ url_for('shop') }}?search=" + encodeURIComponent(query);
+                }
+            }
+        });
+
+        // Анимация при загрузке
+        document.querySelector('.error-container').style.animation = 'fadeIn 0.5s ease-out';
+    </script>
+</body>
+</html>
