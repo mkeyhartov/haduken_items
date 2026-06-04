@@ -368,5 +368,15 @@ def index():
 def login():
     return redirect(url_for('login_page'))
 
+@app.errorhandler(404)
+def page_not_found(error):
+    """Страница для ошибки 404"""
+    # Проверяем, авторизован ли пользователь
+    if 'user_id' in session:
+        return render_template('404.html'), 404
+    else:
+        # Если не авторизован, можно показать упрощенную версию
+        return render_template('404.html'), 404
+
 if __name__ == '__main__':
     app.run(debug=True)
