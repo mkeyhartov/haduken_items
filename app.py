@@ -131,6 +131,56 @@ class Item(db.Model):
         }
 
 
+# ======================= МОДЕЛИ ДЛЯ ЗАКАЗОВ =======================
+class Order(db.Model):
+    __tablename__ = 'orders'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    order_date = db.Column(db.DateTime, default=datetime.utcnow)
+    total_amount = db.Column(db.Float, nullable=False)
+    status = db.Column(db.String(50), default='pending')  # pending, completed, cancelled
+    shipping_address = db.Column(db.Text, nullable=True)
+    phone = db.Column(db.String(50), nullable=True)
+
+    # Связь с пользователем
+    user = db.relationship('User', backref=db.backref('orders', lazy=True))
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'order_date': self.order_date.isoformat() if self.order_date else None,
+            'total_amount': self.total_amount,
+            'status': self.status,
+            'shipping_address': self.shipping_address,
+            'phone': self.phone,
+            'items': [item.to_dict() for item in self.items] if self.items else []
+        }
+
+
+class OrderItem(db.Model):
+    __tablename__ = 'order_items'
+    id = db.Column(db.Integer, primary_key=True)
+    order_id = db.Column(db.Integer, db.ForeignKey('orders.id'), nullable=False)
+    item_id = db.Column(db.Integer, db.ForeignKey('items.id'), nullable=False)
+    quantity = db.Column(db.Integer, nullable=False)
+    price_at_time = db.Column(db.Float, nullable=False)  # Цена на момент заказа
+    name_at_time = db.Column(db.String(200), nullable=False)  # Название на момент заказа
+
+    # Связи
+    order = db.relationship('Order', backref=db.backref('items', lazy=True, cascade='all, delete-orphan'))
+    item = db.relationship('Item', backref=db.backref('order_items', lazy=True))
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'item_id': self.item_id,
+            'quantity': self.quantity,
+            'price_at_time': self.price_at_time,
+            'name_at_time': self.name_at_time,
+            'total': self.price_at_time * self.quantity
+        }
+
 # ======================= ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =======================
 def login_required(f):
     from functools import wraps
