@@ -550,6 +550,7 @@
     document.getElementById('account-section').style.display = 'none';
     document.getElementById('products-section').style.display = 'none';
     document.getElementById('basket-section').style.display = 'none';
+    document.getElementById('orders-section').style.display = 'none';  // ← ДОБАВИТЬ
 
     if (section === 'home') {
         document.getElementById('home-section').style.display = 'block';
@@ -564,19 +565,17 @@
             .catch(() => {});
     } else if (section === 'products') {
         document.getElementById('products-section').style.display = 'block';
-        if (allItems.length === 0) {
-            loadProducts(); // Загружаем товары, если еще не загружены
-        } else {
-            filterAndDisplayProducts(); // Просто обновляем отображение
-        }
+        loadProducts();
     } else if (section === 'basket') {
         document.getElementById('basket-section').style.display = 'block';
-        displayBasket(); // Функция для отображения корзины (нужно добавить)
+        displayBasket();
+    } else if (section === 'orders') {  // ← ДОБАВИТЬ
+        document.getElementById('orders-section').style.display = 'block';
+        loadOrders();
     }
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
-
         function goToProfile() {
             window.location.href = '/profile';
         }
