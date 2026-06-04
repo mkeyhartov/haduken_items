@@ -1108,11 +1108,16 @@ function clearBasket() {
 }
 
 // Функция оформления заказа
-// Функция оформления заказа (улучшенная)
+// Функция оформления заказа (улучшенная с правильными стилями)
 function checkout() {
     const basket = JSON.parse(localStorage.getItem('basket') || '[]');
     if (basket.length === 0) {
         showNotification('Корзина пуста!');
+        return;
+    }
+
+    // Проверяем, нет ли уже открытого модального окна
+    if (document.getElementById('checkoutModal')) {
         return;
     }
 
@@ -1149,8 +1154,19 @@ function checkout() {
     `;
 
     document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+    // Блокируем скролл страницы
+    document.body.style.overflow = 'hidden';
 }
 
+function closeCheckoutModal() {
+    const modal = document.getElementById('checkoutModal');
+    if (modal) {
+        modal.remove();
+        // Возвращаем скролл
+        document.body.style.overflow = '';
+    }
+}
 function closeCheckoutModal() {
     const modal = document.getElementById('checkoutModal');
     if (modal) modal.remove();
