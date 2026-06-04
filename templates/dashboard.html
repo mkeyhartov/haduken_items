@@ -1,306 +1,388 @@
 <!doctype html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Управление товарами | HADUKEN</title>
     <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Arial', sans-serif; background: #f5f5f5; padding: 20px; }
-    .container { max-width: 900px; margin: 0 auto; }
-    .card { background: white; border-radius: 20px; padding: 30px; margin-bottom: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-    h1 { color: #e74c3c; margin-bottom: 10px; font-size: 28px; }
-    h2 { color: #333; margin-bottom: 20px; font-size: 22px; }
-    .back-link { color: #3498db; text-decoration: none; display: inline-block; margin-bottom: 20px; font-size: 16px; }
-    .back-link:hover { text-decoration: underline; }
-    .form-group { margin-bottom: 20px; }
-    label { display: block; margin-bottom: 8px; font-weight: bold; color: #555; font-size: 16px; }
-    input, textarea { width: 100%; padding: 14px; border: 2px solid #eee; border-radius: 10px; font-size: 16px; transition: all 0.3s; }
-    input:focus, textarea:focus { outline: none; border-color: #e74c3c; }
-    textarea { resize: vertical; min-height: 80px; }
-    .btn { padding: 14px 24px; border: none; border-radius: 12px; font-size: 16px; cursor: pointer; transition: all 0.3s; }
-    .btn-success { background: #27ae60; color: white; }
-    .btn-success:hover { background: #219a52; }
-    .btn-danger { background: #e74c3c; color: white; }
-    .btn-danger:hover { background: #c0392b; }
-    .btn-warning { background: #f39c12; color: white; }
-    .btn-warning:hover { background: #e67e22; }
-    .btn-secondary { background: #95a5a6; color: white; }
-    .btn-secondary:hover { background: #7f8c8d; }
-    .items-list { margin-top: 20px; }
-    .item-card { background: #fafafa; border: 1px solid #eee; border-radius: 15px; padding: 20px; margin-bottom: 15px; }
-    .item-info { flex: 1; }
-    .item-name { font-weight: bold; font-size: 18px; color: #333; word-break: break-word; }
-    .item-price { color: #e74c3c; font-weight: bold; margin-top: 5px; font-size: 16px; }
-    .item-desc { color: #777; font-size: 14px; margin-top: 5px; word-break: break-word; line-height: 1.4; }
-    .item-actions { display: flex; gap: 10px; margin-top: 15px; }
-    .delete-btn, .edit-btn { padding: 10px 16px; border-radius: 8px; cursor: pointer; font-size: 14px; border: none; }
-    .delete-btn { background: #e74c3c; color: white; }
-    .delete-btn:hover { background: #c0392b; }
-    .edit-btn { background: #3498db; color: white; }
-    .edit-btn:hover { background: #2980b9; }
-    .empty { text-align: center; color: #999; padding: 40px; font-size: 16px; }
-
-    /* Модальное окно */
-    .modal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.6);
-        backdrop-filter: blur(3px);
-        z-index: 9999;
-        justify-content: center;
-        align-items: center;
-        animation: fadeIn 0.3s ease-out;
-    }
-
-    @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-    }
-
-    @keyframes slideUp {
-        from {
-            transform: translateY(30px);
-            opacity: 0;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        to {
-            transform: translateY(0);
-            opacity: 1;
-        }
-    }
 
-    .modal-content {
-        background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
-        border-radius: 24px;
-        padding: 0;
-        max-width: 500px;
-        width: 90%;
-        max-height: 85vh;
-        overflow-y: auto;
-        box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
-        animation: slideUp 0.3s ease-out;
-    }
-
-    .modal-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 20px 24px;
-        border-bottom: 2px solid #f0f0f0;
-        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-        border-radius: 24px 24px 0 0;
-    }
-
-    .modal-header h3 {
-        color: white;
-        font-size: 20px;
-        margin: 0;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .close-modal {
-        background: rgba(255,255,255,0.2);
-        border: none;
-        font-size: 24px;
-        cursor: pointer;
-        color: white;
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        transition: all 0.3s;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .close-modal:hover {
-        background: rgba(255,255,255,0.4);
-        transform: rotate(90deg);
-    }
-
-    .modal-body {
-        padding: 24px;
-    }
-
-    .modal-footer {
-        padding: 16px 24px;
-        border-top: 1px solid #f0f0f0;
-        display: flex;
-        gap: 12px;
-        justify-content: flex-end;
-        background: #fafafa;
-        border-radius: 0 0 24px 24px;
-    }
-
-    .modal .form-group {
-        margin-bottom: 20px;
-    }
-
-    .modal label {
-        display: block;
-        margin-bottom: 8px;
-        font-weight: 600;
-        color: #333;
-        font-size: 15px;
-    }
-
-    .modal input, .modal textarea {
-        width: 100%;
-        padding: 12px 14px;
-        border: 2px solid #e0e0e0;
-        border-radius: 12px;
-        font-size: 16px;
-        transition: all 0.3s;
-        font-family: inherit;
-    }
-
-    .modal input:focus, .modal textarea:focus {
-        outline: none;
-        border-color: #e74c3c;
-        box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
-    }
-
-    .modal textarea {
-        resize: vertical;
-        min-height: 80px;
-    }
-
-    /* ===== АДАПТАЦИЯ ПОД МОБИЛЬНЫЕ УСТРОЙСТВА ===== */
-    @media (max-width: 768px) {
         body {
-            padding: 10px;
+            font-family: 'Arial', sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
         }
 
         .container {
             max-width: 100%;
+            margin: 0;
+            padding: 20px;
         }
 
         .card {
-            padding: 20px 15px;
-            border-radius: 15px;
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
 
         h1 {
-            font-size: 24px;
+            color: #e74c3c;
+            margin-bottom: 15px;
+            font-size: 32px;
         }
 
         h2 {
-            font-size: 20px;
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 24px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e74c3c;
         }
 
         .back-link {
-            font-size: 14px;
+            color: #3498db;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 20px;
+            font-size: 16px;
+            padding: 8px 0;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
         }
 
         label {
-            font-size: 15px;
-        }
-
-        input, textarea {
-            padding: 12px;
-            font-size: 15px;
-        }
-
-        .btn {
-            padding: 12px 20px;
-            font-size: 15px;
-            width: 100%;
+            display: block;
             margin-bottom: 10px;
-        }
-
-        .item-card {
-            padding: 15px;
-        }
-
-        .item-name {
+            font-weight: bold;
+            color: #555;
             font-size: 17px;
         }
 
-        .item-price {
-            font-size: 16px;
-        }
-
-        .item-desc {
-            font-size: 14px;
-        }
-
-        .item-actions {
-            flex-direction: column;
-            gap: 8px;
-            margin-top: 12px;
-        }
-
-        .delete-btn, .edit-btn {
+        input, textarea {
             width: 100%;
-            text-align: center;
-            padding: 10px;
-            font-size: 14px;
-        }
-
-        .modal-content {
-            width: 95%;
-            max-height: 90vh;
-        }
-
-        .modal-header h3 {
-            font-size: 18px;
-        }
-
-        .modal-body {
             padding: 15px;
-        }
-
-        .modal-footer {
-            flex-direction: column;
-        }
-
-        .modal-footer .btn {
-            width: 100%;
-            margin: 0;
-            margin-bottom: 8px;
-        }
-
-        .empty {
-            font-size: 14px;
-            padding: 30px;
-        }
-    }
-
-    @media (max-width: 480px) {
-        .card {
-            padding: 15px 12px;
-        }
-
-        h1 {
-            font-size: 22px;
-        }
-
-        h2 {
-            font-size: 18px;
-        }
-
-        .item-name {
+            border: 2px solid #eee;
+            border-radius: 12px;
             font-size: 16px;
+            transition: all 0.3s;
         }
 
-        .item-price {
-            font-size: 15px;
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #e74c3c;
         }
 
-        .item-desc {
-            font-size: 13px;
+        textarea {
+            resize: vertical;
+            min-height: 100px;
         }
 
         .btn {
-            padding: 10px 16px;
-            font-size: 14px;
+            padding: 16px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
         }
-    }
-</style>
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #219a52;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+
+        .items-list {
+            margin-top: 20px;
+        }
+
+        .item-card {
+            background: #fafafa;
+            border: 1px solid #eee;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .item-name {
+            font-weight: bold;
+            font-size: 20px;
+            color: #333;
+            word-break: break-word;
+            margin-bottom: 5px;
+        }
+
+        .item-price {
+            color: #e74c3c;
+            font-weight: bold;
+            margin-top: 5px;
+            font-size: 18px;
+        }
+
+        .item-desc {
+            color: #777;
+            font-size: 15px;
+            margin-top: 8px;
+            word-break: break-word;
+            line-height: 1.4;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            flex-direction: column;
+        }
+
+        .delete-btn, .edit-btn {
+            padding: 12px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            width: 100%;
+        }
+
+        .delete-btn {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background: #c0392b;
+        }
+
+        .edit-btn {
+            background: #3498db;
+            color: white;
+        }
+
+        .edit-btn:hover {
+            background: #2980b9;
+        }
+
+        .empty {
+            text-align: center;
+            color: #999;
+            padding: 50px;
+            font-size: 16px;
+        }
+
+        /* Модальное окно */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 24px;
+            padding: 0;
+            max-width: 500px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            border-radius: 24px 24px 0 0;
+        }
+
+        .modal-header h3 {
+            color: white;
+            font-size: 22px;
+            margin: 0;
+        }
+
+        .close-modal {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        .close-modal:hover {
+            background: rgba(255,255,255,0.4);
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            background: #fafafa;
+            border-radius: 0 0 24px 24px;
+            flex-direction: column;
+        }
+
+        .modal .form-group {
+            margin-bottom: 20px;
+        }
+
+        .modal label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .modal input, .modal textarea {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 16px;
+        }
+
+        .modal input:focus, .modal textarea:focus {
+            outline: none;
+            border-color: #e74c3c;
+        }
+
+        /* Мобильная адаптация */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .card {
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            h2 {
+                font-size: 22px;
+            }
+
+            label {
+                font-size: 16px;
+            }
+
+            input, textarea {
+                padding: 14px;
+                font-size: 16px;
+            }
+
+            .btn {
+                padding: 14px 20px;
+                font-size: 17px;
+            }
+
+            .item-name {
+                font-size: 18px;
+            }
+
+            .item-price {
+                font-size: 17px;
+            }
+
+            .item-desc {
+                font-size: 14px;
+            }
+
+            .modal-header h3 {
+                font-size: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+
+            .card {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 26px;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+
+            .btn {
+                padding: 12px 16px;
+                font-size: 16px;
+            }
+
+            .item-name {
+                font-size: 17px;
+            }
+
+            .item-price {
+                font-size: 16px;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -337,224 +419,219 @@
             </div>
         </div>
     </div>
-    <!-- ВСТАВИТЬ ПЕРЕД </body> -->
-<!-- Модальное окно редактирования -->
-<div id="editModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>✏️ Редактировать товар</h3>
-            <button class="close-modal" onclick="closeEditModal()">&times;</button>
+
+    <!-- Модальное окно редактирования -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>✏️ Редактировать товар</h3>
+                <button class="close-modal" onclick="closeEditModal()">&times;</button>
+            </div>
+            <form id="editForm">
+                <div class="modal-body">
+                    <input type="hidden" id="edit_id">
+                    <div class="form-group">
+                        <label>Название товара</label>
+                        <input type="text" id="edit_name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Цена</label>
+                        <input type="number" id="edit_price" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Описание</label>
+                        <textarea id="edit_description" rows="4"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>URL изображения</label>
+                        <input type="text" id="edit_image_url">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Отмена</button>
+                    <button type="submit" class="btn btn-success">💾 Сохранить</button>
+                </div>
+            </form>
         </div>
-        <form id="editForm">
-            <input type="hidden" id="edit_id">
-            <div class="form-group">
-                <label>Название товара</label>
-                <input type="text" id="edit_name" required>
-            </div>
-            <div class="form-group">
-                <label>Цена</label>
-                <input type="number" id="edit_price" step="0.01" required>
-            </div>
-            <div class="form-group">
-                <label>Описание</label>
-                <textarea id="edit_description" rows="4"></textarea>
-            </div>
-            <div class="form-group">
-                <label>URL изображения</label>
-                <input type="text" id="edit_image_url">
-            </div>
-            <div style="display: flex; gap: 10px; justify-content: flex-end;">
-                <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Отмена</button>
-                <button type="submit" class="btn btn-success">💾 Сохранить изменения</button>
-            </div>
-        </form>
     </div>
-</div>
-   <script>
-    let currentUserId = null;
 
-    // Получаем информацию о текущем пользователе
-    async function getCurrentUser() {
-        try {
-            const response = await fetch('/api/auth/me');
-            if (response.ok) {
-                const user = await response.json();
-                currentUserId = user.id;
+    <script>
+        let currentUserId = null;
+
+        async function getCurrentUser() {
+            try {
+                const response = await fetch('/api/auth/me');
+                if (response.ok) {
+                    const user = await response.json();
+                    currentUserId = user.id;
+                }
+            } catch (err) {
+                console.error('Ошибка получения пользователя:', err);
             }
-        } catch (err) {
-            console.error('Ошибка получения пользователя:', err);
         }
-    }
 
-    async function loadItems() {
-        try {
-            const response = await fetch('/api/items');
-            const items = await response.json();
-            const container = document.getElementById('itemsList');
+        async function loadItems() {
+            try {
+                const response = await fetch('/api/items');
+                const items = await response.json();
+                const container = document.getElementById('itemsList');
 
-            // Фильтруем товары только текущего пользователя
-            const myItems = items.filter(item => item.created_by === currentUserId);
+                const myItems = items.filter(item => item.created_by === currentUserId);
 
-            if (myItems.length === 0) {
-                container.innerHTML = '<div class="empty">📭 У вас пока нет добавленных товаров</div>';
+                if (myItems.length === 0) {
+                    container.innerHTML = '<div class="empty">📭 У вас пока нет добавленных товаров</div>';
+                    return;
+                }
+
+                container.innerHTML = '';
+                myItems.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'item-card';
+                    div.innerHTML = `
+                        <div class="item-info">
+                            <div class="item-name">📦 ${escapeHtml(item.name)}</div>
+                            <div class="item-price">💰 $${item.price}</div>
+                            ${item.description ? `<div class="item-desc">📝 ${escapeHtml(item.description)}</div>` : ''}
+                        </div>
+                        <div class="item-actions">
+                            <button class="edit-btn" onclick="openEditModal(${item.id})">✏️ Редактировать</button>
+                            <button class="delete-btn" onclick="deleteItem(${item.id})">🗑 Удалить</button>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+            } catch (err) {
+                document.getElementById('itemsList').innerHTML = '<div class="empty">⚠️ Ошибка загрузки товаров</div>';
+            }
+        }
+
+        async function openEditModal(itemId) {
+            try {
+                const response = await fetch('/api/items');
+                const items = await response.json();
+                const item = items.find(i => i.id === itemId);
+
+                if (item) {
+                    document.getElementById('edit_id').value = item.id;
+                    document.getElementById('edit_name').value = item.name;
+                    document.getElementById('edit_price').value = item.price;
+                    document.getElementById('edit_description').value = item.description || '';
+                    document.getElementById('edit_image_url').value = item.image_url || '';
+                    document.getElementById('editModal').style.display = 'flex';
+                }
+            } catch (err) {
+                alert('Ошибка загрузки данных товара');
+            }
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+            document.getElementById('editForm').reset();
+        }
+
+        document.getElementById('editForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const id = document.getElementById('edit_id').value;
+            const name = document.getElementById('edit_name').value;
+            const price = parseFloat(document.getElementById('edit_price').value);
+            const description = document.getElementById('edit_description').value;
+            const image_url = document.getElementById('edit_image_url').value;
+
+            if (!name || isNaN(price) || price <= 0) {
+                alert('Пожалуйста, заполните название и корректную цену');
                 return;
             }
 
-            container.innerHTML = '';
-            myItems.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'item-card';
-                div.innerHTML = `
-                    <div class="item-info">
-                        <div class="item-name">${escapeHtml(item.name)}</div>
-                        <div class="item-price">$${item.price}</div>
-                        ${item.description ? `<div class="item-desc">${escapeHtml(item.description)}</div>` : ''}
-                        <div class="item-desc" style="color:#aaa; font-size:12px;">ID: ${item.id}</div>
-                    </div>
-                    <div class="item-actions">
-                        <button class="edit-btn" onclick="openEditModal(${item.id})">✏️ Редактировать</button>
-                        <button class="delete-btn" onclick="deleteItem(${item.id})">🗑 Удалить</button>
-                    </div>
-                `;
-                container.appendChild(div);
-            });
-        } catch (err) {
-            document.getElementById('itemsList').innerHTML = '<div class="empty">⚠️ Ошибка загрузки товаров</div>';
-        }
-    }
+            try {
+                const response = await fetch(`/api/items/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, price, description, image_url })
+                });
 
-    // Открыть модальное окно с данными товара
-    async function openEditModal(itemId) {
-        try {
-            const response = await fetch('/api/items');
-            const items = await response.json();
-            const item = items.find(i => i.id === itemId);
-
-            if (item) {
-                document.getElementById('edit_id').value = item.id;
-                document.getElementById('edit_name').value = item.name;
-                document.getElementById('edit_price').value = item.price;
-                document.getElementById('edit_description').value = item.description || '';
-                document.getElementById('edit_image_url').value = item.image_url || '';
-                document.getElementById('editModal').style.display = 'flex';
+                if (response.ok) {
+                    closeEditModal();
+                    loadItems();
+                    alert('✅ Товар успешно обновлен!');
+                } else {
+                    const data = await response.json();
+                    alert(data.error || 'Ошибка обновления');
+                }
+            } catch (err) {
+                alert('Ошибка соединения');
             }
-        } catch (err) {
-            alert('Ошибка загрузки данных товара');
-        }
-    }
+        });
 
-    // Закрыть модальное окно
-    function closeEditModal() {
-        document.getElementById('editModal').style.display = 'none';
-        document.getElementById('editForm').reset();
-    }
+        async function deleteItem(id) {
+            if (!confirm('Вы уверены, что хотите удалить этот товар?')) return;
 
-    // Сохранить изменения товара
-    document.getElementById('editForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        const id = document.getElementById('edit_id').value;
-        const name = document.getElementById('edit_name').value;
-        const price = parseFloat(document.getElementById('edit_price').value);
-        const description = document.getElementById('edit_description').value;
-        const image_url = document.getElementById('edit_image_url').value;
-
-        if (!name || isNaN(price) || price <= 0) {
-            alert('Пожалуйста, заполните название и корректную цену');
-            return;
+            try {
+                const response = await fetch(`/api/items/${id}`, { method: 'DELETE' });
+                if (response.ok) {
+                    loadItems();
+                    alert('✅ Товар удален');
+                } else {
+                    const data = await response.json();
+                    alert(data.error || 'Ошибка удаления');
+                }
+            } catch (err) {
+                alert('Ошибка соединения');
+            }
         }
 
-        try {
-            const response = await fetch(`/api/items/${id}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, price, description, image_url })
-            });
+        document.getElementById('itemForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
 
-            if (response.ok) {
+            const name = document.getElementById('name').value;
+            const price = parseFloat(document.getElementById('price').value);
+            const description = document.getElementById('description').value;
+            const image_url = document.getElementById('image_url').value;
+
+            if (!name || isNaN(price) || price <= 0) {
+                alert('Пожалуйста, заполните название и корректную цену');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/items', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, price, description, image_url })
+                });
+
+                if (response.ok) {
+                    document.getElementById('itemForm').reset();
+                    loadItems();
+                    alert('✅ Товар успешно добавлен!');
+                } else {
+                    const data = await response.json();
+                    alert(data.error || 'Ошибка добавления');
+                }
+            } catch (err) {
+                alert('Ошибка соединения');
+            }
+        });
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('editModal');
+            if (event.target === modal) {
                 closeEditModal();
-                loadItems();
-                alert('✅ Товар успешно обновлен!');
-            } else {
-                const data = await response.json();
-                alert(data.error || 'Ошибка обновления');
             }
-        } catch (err) {
-            alert('Ошибка соединения');
-        }
-    });
-
-    async function deleteItem(id) {
-        if (!confirm('Вы уверены, что хотите удалить этот товар?')) return;
-
-        try {
-            const response = await fetch(`/api/items/${id}`, { method: 'DELETE' });
-            if (response.ok) {
-                loadItems();
-                alert('✅ Товар удален');
-            } else {
-                const data = await response.json();
-                alert(data.error || 'Ошибка удаления');
-            }
-        } catch (err) {
-            alert('Ошибка соединения');
-        }
-    }
-
-    document.getElementById('itemForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        const name = document.getElementById('name').value;
-        const price = parseFloat(document.getElementById('price').value);
-        const description = document.getElementById('description').value;
-        const image_url = document.getElementById('image_url').value;
-
-        if (!name || isNaN(price) || price <= 0) {
-            alert('Пожалуйста, заполните название и корректную цену');
-            return;
         }
 
-        try {
-            const response = await fetch('/api/items', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, price, description, image_url })
-            });
-
-            if (response.ok) {
-                document.getElementById('itemForm').reset();
-                loadItems();
-                alert('✅ Товар успешно добавлен!');
-            } else {
-                const data = await response.json();
-                alert(data.error || 'Ошибка добавления');
-            }
-        } catch (err) {
-            alert('Ошибка соединения');
+        async function init() {
+            await getCurrentUser();
+            await loadItems();
         }
-    });
 
-    function escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    }
-
-    // Закрыть модальное окно при клике вне его
-    window.onclick = function(event) {
-        const modal = document.getElementById('editModal');
-        if (event.target === modal) {
-            closeEditModal();
-        }
-    }
-
-    // Инициализация
-    async function init() {
-        await getCurrentUser();
-        await loadItems();
-    }
-
-    init();
-</script>
+        init();
+    </script>
 </body>
 </html>
