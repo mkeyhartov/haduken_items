@@ -966,6 +966,7 @@ function clearBasket() {
 }
 
 // Функция оформления заказа
+// Функция оформления заказа (улучшенная)
 function checkout() {
     const basket = JSON.parse(localStorage.getItem('basket') || '[]');
     if (basket.length === 0) {
@@ -973,10 +974,195 @@ function checkout() {
         return;
     }
 
-    alert('Спасибо за заказ! В ближайшее время с вами свяжется менеджер.');
-    localStorage.setItem('basket', '[]');
-    displayBasket();
-    updateBasketCount();
+    // Создаем модальное окно для ввода данных
+    const modalHtml = `
+        <div id="checkoutModal" class="modal" style="display: flex;">
+            <div class="modal-content checkout-modal">
+                <div class="modal-header">
+                    <h3>📝 Оформление заказа</h3>
+                    <button class="close-modal" onclick="closeCheckoutModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="checkout-form-group">
+                        <label>📱 Телефон *</label>
+                        <input type="tel" id="checkoutPhone" placeholder="+375 XX XXX-XX-XX" required>
+                    </div>
+                    <div class="checkout-form-group">
+                        <label>🏠 Адрес доставки *</label>
+                        <textarea id="checkoutAddress" rows="3" placeholder="Город, улица, дом, квартира" required></textarea>
+                    </div>
+                    <div class="checkout-form-group">
+                        <label>💰 Итого к оплате:</label>
+                        <div style="font-size: 24px; font-weight: bold; color: #e74c3c;">
+                            $${calculateBasketTotal().toFixed(2)}
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeCheckoutModal()">Отмена</button>
+                    <button class="btn btn-success" onclick="submitOrder()">✅ Подтвердить заказ</button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+}
+
+function closeCheckoutModal() {
+    const modal = document.getElementById('checkoutModal');
+    if (modal) modal.remove();
+}
+
+function calculateBasketTotal() {
+    const basket = JSON.parse(localStorage.getItem('basket') || '[]');
+    return basket.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0);
+}
+
+async function submitOrder() {
+    const phone = document.getElementById('checkoutPhone').value.trim();
+    const address = document.getElementById('checkoutAddress').value.trim();
+
+    if (!phone) {
+        showNotification('Пожалуйста, укажите номер телефона');
+        return;
+    }
+
+    if (!address) {
+        showNotification('Пожалуйста, укажите адрес доставки');
+        return;
+    }
+
+    const basket = JSON.parse(localStorage.getItem('basket') || '[]');
+    const items = basket.map(item => ({
+        id: item.id,
+        quantity: item.quantity || 1
+    }));
+
+    try {
+        const response = await fetch('/api/orders', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                items: items,
+                phone: phone,
+                shipping_address: address
+            })
+        });
+
+        if (response.ok) {
+            // Очищаем корзину
+            localStorage.setItem('basket', '[]');
+            updateBasketCount();
+            closeCheckoutModal();
+            showNotification('✅ Заказ успешно оформлен!');
+
+            // Обновляем корзину на странице
+            displayBasket();
+
+            // Переключаемся на историю заказов через 1.5 секунды
+            setTimeout(() => {
+                showSection('orders');
+            }, 1500);
+        } else {
+            const data = await response.json();
+            showNotification(data.error || 'Ошибка оформления заказа');
+        }
+    } catch (err) {
+        showNotification('Ошибка соединения');
+    }
+}
+
+// Функция загрузки истории заказов
+async function loadOrders() {
+    try {
+        const response = await fetch('/api/orders');
+        if (!response.ok) {
+            throw new Error('Failed to load orders');
+        }
+
+        const orders = await response.json();
+        const container = document.getElementById('orders-list');
+
+        if (!container) return;
+
+        if (orders.length === 0) {
+            container.innerHTML = `
+                <div class="no-orders">
+                    <div class="no-orders-icon">📭</div>
+                    <h3>У вас пока нет заказов</h3>
+                    <p style="color: #777; margin-top: 10px;">Перейдите в магазин и сделайте первый заказ!</p>
+                    <button onclick="showSection('products')" style="margin-top: 20px; background: #e74c3c; color: white; border: none; padding: 12px 24px; border-radius: 10px; cursor: pointer;">
+                        🛍️ Перейти в магазин
+                    </button>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = orders.map(order => `
+            <div class="order-card" data-order-id="${order.id}">
+                <div class="order-header" onclick="toggleOrderDetails(${order.id})">
+                    <div class="order-header-left">
+                        <div class="order-id">Заказ #${order.id}</div>
+                        <div class="order-date">📅 ${new Date(order.order_date).toLocaleString('ru-RU')}</div>
+                    </div>
+                    <div class="order-header-right">
+                        <div class="order-total">$${order.total_amount.toFixed(2)}</div>
+                        <span class="order-status status-${order.status}">
+                            ${order.status === 'completed' ? '✅ Выполнен' : order.status === 'pending' ? '⏳ В обработке' : '❌ Отменен'}
+                        </span>
+                    </div>
+                    <div class="expand-icon">▼</div>
+                </div>
+                <div class="order-details" id="order-details-${order.id}">
+                    <table class="order-items-table">
+                        <thead>
+                            <tr>
+                                <th>Товар</th>
+                                <th>Цена</th>
+                                <th>Кол-во</th>
+                                <th>Сумма</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${order.items.map(item => `
+                                <tr>
+                                    <td>${escapeHtml(item.name_at_time)}</td>
+                                    <td>$${item.price_at_time.toFixed(2)}</td>
+                                    <td>${item.quantity}</td>
+                                    <td>$${(item.price_at_time * item.quantity).toFixed(2)}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                    <div class="order-shipping">
+                        <h4>📦 Информация о доставке</h4>
+                        <p><strong>📱 Телефон:</strong> ${escapeHtml(order.phone || 'Не указан')}</p>
+                        <p><strong>🏠 Адрес:</strong> ${escapeHtml(order.shipping_address || 'Не указан')}</p>
+                        <p><strong>📅 Дата заказа:</strong> ${new Date(order.order_date).toLocaleString('ru-RU')}</p>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+
+    } catch (err) {
+        console.error('Ошибка загрузки заказов:', err);
+        const container = document.getElementById('orders-list');
+        if (container) {
+            container.innerHTML = '<div style="text-align: center; padding: 40px; color: red;">⚠️ Ошибка загрузки истории заказов</div>';
+        }
+    }
+}
+
+function toggleOrderDetails(orderId) {
+    const details = document.getElementById(`order-details-${orderId}`);
+    const card = document.querySelector(`.order-card[data-order-id="${orderId}"]`);
+
+    if (details) {
+        details.classList.toggle('show');
+        card.classList.toggle('expanded');
+    }
 }
         // Запускаем проверку авторизации
         checkAuth();
