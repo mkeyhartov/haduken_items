@@ -3,21 +3,20 @@
 <head>
     <title>Управление товарами | HADUKEN</title>
     <style>
-    <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Arial', sans-serif; background: #f5f5f5; padding: 20px; }
     .container { max-width: 900px; margin: 0 auto; }
     .card { background: white; border-radius: 20px; padding: 30px; margin-bottom: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
     h1 { color: #e74c3c; margin-bottom: 10px; font-size: 28px; }
     h2 { color: #333; margin-bottom: 20px; font-size: 22px; }
-    .back-link { color: #3498db; text-decoration: none; display: inline-block; margin-bottom: 20px; }
+    .back-link { color: #3498db; text-decoration: none; display: inline-block; margin-bottom: 20px; font-size: 16px; }
     .back-link:hover { text-decoration: underline; }
     .form-group { margin-bottom: 20px; }
-    label { display: block; margin-bottom: 8px; font-weight: bold; color: #555; }
-    input, textarea { width: 100%; padding: 12px; border: 2px solid #eee; border-radius: 10px; font-size: 16px; transition: all 0.3s; }
+    label { display: block; margin-bottom: 8px; font-weight: bold; color: #555; font-size: 16px; }
+    input, textarea { width: 100%; padding: 14px; border: 2px solid #eee; border-radius: 10px; font-size: 16px; transition: all 0.3s; }
     input:focus, textarea:focus { outline: none; border-color: #e74c3c; }
     textarea { resize: vertical; min-height: 80px; }
-    .btn { padding: 12px 24px; border: none; border-radius: 10px; font-size: 16px; cursor: pointer; transition: all 0.3s; }
+    .btn { padding: 14px 24px; border: none; border-radius: 12px; font-size: 16px; cursor: pointer; transition: all 0.3s; }
     .btn-success { background: #27ae60; color: white; }
     .btn-success:hover { background: #219a52; }
     .btn-danger { background: #e74c3c; color: white; }
@@ -30,15 +29,15 @@
     .item-card { background: #fafafa; border: 1px solid #eee; border-radius: 15px; padding: 20px; margin-bottom: 15px; }
     .item-info { flex: 1; }
     .item-name { font-weight: bold; font-size: 18px; color: #333; word-break: break-word; }
-    .item-price { color: #e74c3c; font-weight: bold; margin-top: 5px; }
-    .item-desc { color: #777; font-size: 14px; margin-top: 5px; word-break: break-word; }
+    .item-price { color: #e74c3c; font-weight: bold; margin-top: 5px; font-size: 16px; }
+    .item-desc { color: #777; font-size: 14px; margin-top: 5px; word-break: break-word; line-height: 1.4; }
     .item-actions { display: flex; gap: 10px; margin-top: 15px; }
-    .delete-btn, .edit-btn { padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 14px; border: none; }
+    .delete-btn, .edit-btn { padding: 10px 16px; border-radius: 8px; cursor: pointer; font-size: 14px; border: none; }
     .delete-btn { background: #e74c3c; color: white; }
     .delete-btn:hover { background: #c0392b; }
     .edit-btn { background: #3498db; color: white; }
     .edit-btn:hover { background: #2980b9; }
-    .empty { text-align: center; color: #999; padding: 40px; }
+    .empty { text-align: center; color: #999; padding: 40px; font-size: 16px; }
 
     /* Модальное окно */
     .modal {
@@ -146,7 +145,7 @@
         margin-bottom: 8px;
         font-weight: 600;
         color: #333;
-        font-size: 14px;
+        font-size: 15px;
     }
 
     .modal input, .modal textarea {
@@ -154,7 +153,7 @@
         padding: 12px 14px;
         border: 2px solid #e0e0e0;
         border-radius: 12px;
-        font-size: 15px;
+        font-size: 16px;
         transition: all 0.3s;
         font-family: inherit;
     }
@@ -186,25 +185,29 @@
         }
 
         h1 {
-            font-size: 22px;
+            font-size: 24px;
         }
 
         h2 {
-            font-size: 18px;
+            font-size: 20px;
         }
 
-        .form-group label {
+        .back-link {
             font-size: 14px;
+        }
+
+        label {
+            font-size: 15px;
         }
 
         input, textarea {
-            padding: 10px;
-            font-size: 14px;
+            padding: 12px;
+            font-size: 15px;
         }
 
         .btn {
-            padding: 10px 20px;
-            font-size: 14px;
+            padding: 12px 20px;
+            font-size: 15px;
             width: 100%;
             margin-bottom: 10px;
         }
@@ -214,15 +217,15 @@
         }
 
         .item-name {
-            font-size: 16px;
+            font-size: 17px;
         }
 
         .item-price {
-            font-size: 14px;
+            font-size: 16px;
         }
 
         .item-desc {
-            font-size: 12px;
+            font-size: 14px;
         }
 
         .item-actions {
@@ -235,6 +238,7 @@
             width: 100%;
             text-align: center;
             padding: 10px;
+            font-size: 14px;
         }
 
         .modal-content {
@@ -257,6 +261,12 @@
         .modal-footer .btn {
             width: 100%;
             margin: 0;
+            margin-bottom: 8px;
+        }
+
+        .empty {
+            font-size: 14px;
+            padding: 30px;
         }
     }
 
@@ -266,18 +276,30 @@
         }
 
         h1 {
-            font-size: 20px;
+            font-size: 22px;
         }
 
         h2 {
-            font-size: 16px;
+            font-size: 18px;
         }
 
         .item-name {
+            font-size: 16px;
+        }
+
+        .item-price {
             font-size: 15px;
         }
+
+        .item-desc {
+            font-size: 13px;
+        }
+
+        .btn {
+            padding: 10px 16px;
+            font-size: 14px;
+        }
     }
-</style>
 </style>
 </head>
 <body>
