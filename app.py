@@ -474,7 +474,7 @@ def login_page():
     if 'user_id' in session:
         return redirect(url_for('profile_page'))
     return render_template('login.html')
-
+//
 
 @app.route('/auth/register')
 def register_page():
