@@ -372,6 +372,102 @@ def update_item(item_id):
 
     return jsonify(item.to_dict()), 200
 
+
+# ======================= API ДЛЯ ЗАКАЗОВ =======================
+
+@app.route('/api/orders', methods=['POST'])
+@login_required
+def create_order():
+    """Создание нового заказа"""
+    data = request.get_json()
+    if not data:
+        return jsonify({'error': 'Invalid request'}), 400
+
+    items = data.get('items', [])
+    shipping_address = data.get('shipping_address', '')
+    phone = data.get('phone', '')
+
+    if not items:
+        return jsonify({'error': 'Cart is empty'}), 400
+
+    if not shipping_address:
+        return jsonify({'error': 'Shipping address is required'}), 400
+
+    if not phone:
+        return jsonify({'error': 'Phone number is required'}), 400
+
+    # Вычисляем общую сумму
+    total_amount = 0
+    order_items = []
+
+    for cart_item in items:
+        item = Item.query.get(cart_item['id'])
+        if not item:
+            continue
+        quantity = cart_item.get('quantity', 1)
+        item_total = item.price * quantity
+        total_amount += item_total
+        order_items.append({
+            'item': item,
+            'quantity': quantity,
+            'price_at_time': item.price,
+            'name_at_time': item.name
+        })
+
+    if total_amount == 0:
+        return jsonify({'error': 'No valid items in cart'}), 400
+
+    # Создаем заказ
+    order = Order(
+        user_id=session['user_id'],
+        total_amount=total_amount,
+        status='completed',  # Сразу завершенный
+        shipping_address=shipping_address,
+        phone=phone
+    )
+    db.session.add(order)
+    db.session.flush()  # Чтобы получить order.id
+
+    # Добавляем товары в заказ
+    for order_item in order_items:
+        order_item_obj = OrderItem(
+            order_id=order.id,
+            item_id=order_item['item'].id,
+            quantity=order_item['quantity'],
+            price_at_time=order_item['price_at_time'],
+            name_at_time=order_item['name_at_time']
+        )
+        db.session.add(order_item_obj)
+
+    db.session.commit()
+
+    return jsonify({
+        'message': 'Order created successfully',
+        'order': order.to_dict()
+    }), 201
+
+
+@app.route('/api/orders', methods=['GET'])
+@login_required
+def get_orders():
+    """Получение истории заказов пользователя"""
+    orders = Order.query.filter_by(user_id=session['user_id']).order_by(Order.order_date.desc()).all()
+    return jsonify([order.to_dict() for order in orders]), 200
+
+
+@app.route('/api/orders/<int:order_id>', methods=['GET'])
+@login_required
+def get_order(order_id):
+    """Получение деталей конкретного заказа"""
+    order = Order.query.get(order_id)
+    if not order:
+        return jsonify({'error': 'Order not found'}), 404
+
+    if order.user_id != session['user_id'] and session.get('user_status') != 'admin':
+        return jsonify({'error': 'Forbidden'}), 403
+
+    return jsonify(order.to_dict()), 200
+
 # ======================= СТРАНИЦЫ (ФРОНТЕНД) =======================
 @app.route('/auth/login')
 def login_page():
